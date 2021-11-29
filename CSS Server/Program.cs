@@ -2,7 +2,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //// Add services to the container.
 ////builder.Services.AddRazorPages();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
 
 var app = builder.Build();
@@ -28,12 +29,16 @@ var webSocketOptions = new WebSocketOptions()
 app.UseWebSockets(webSocketOptions);
 
 
-app.MapControllers();
+//app.MapControllers();
 
-//app.UseRouting();
+app.UseRouting();
 
 ////app.UseAuthorization();
 
 ////app.MapRazorPages();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
