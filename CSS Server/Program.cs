@@ -1,8 +1,16 @@
+using CSS_Server.JsonProvider;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+builder.Services.AddSingleton<CameraJsonProvider>();
 
 //// Add services to the container.
 ////builder.Services.AddRazorPages();
