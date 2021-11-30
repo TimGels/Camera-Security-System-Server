@@ -1,5 +1,6 @@
 ﻿using CSS_Server.JsonProvider;
 using CSS_Server.Models;
+using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSS_Server.Controllers
@@ -23,9 +24,14 @@ namespace CSS_Server.Controllers
             return Ok(CameraJsonProvider.GetCameras(cameras));
         }
 
-        public string Index()
+        public IActionResult Index()
         {
-            return "Hello World!!!";
+            CameraIndexViewModel model = new CameraIndexViewModel()
+            {
+                Cameras = CameraManager.Instance.Cameras,
+            };
+
+            return View(model);
         }
     }
 }
