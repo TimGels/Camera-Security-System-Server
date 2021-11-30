@@ -1,4 +1,6 @@
-﻿namespace CSS_Server.Models
+﻿using System.Collections.Generic;
+
+namespace CSS_Server.Models
 {
     public sealed class CameraManager
     {
