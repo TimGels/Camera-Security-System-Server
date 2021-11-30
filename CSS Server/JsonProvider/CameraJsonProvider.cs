@@ -6,26 +6,26 @@ namespace CSS_Server.JsonProvider
 {
     public static class CameraJsonProvider
     {
-        public static JObject GetCamera(Camera camera)
+        public static JObject GetJCamera(Camera camera)
         {
-            var json = new JObject();
-            json["id"] = camera.Id;
-            json["name"] = camera.Name;
-            json["connected"] = camera.Connected;
+            JObject jCamera = new JObject();
+            jCamera["id"] = camera.Id;
+            jCamera["name"] = camera.Name;
+            jCamera["connected"] = camera.Connected;
 
-            return json;
+            return jCamera;
         }
 
         public static JArray GetCameras(List<Camera> cameras)
         {
-            var json = new JArray();
+            JArray jCameras = new JArray();
 
             foreach (Camera camera in cameras)
             {
-                json.Add(GetCamera(camera));
+                jCameras.Add(GetJCamera(camera));
             }
 
-            return json;
+            return jCameras;
         }
     }
 }
