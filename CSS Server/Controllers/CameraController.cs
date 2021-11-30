@@ -14,11 +14,13 @@ namespace CSS_Server.Controllers
     {
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
+        private readonly CameraManager _cameraManager;
 
         public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
         {
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
+            _cameraManager = provider.GetRequiredService<CameraManager>();
         }
 
         //[HttpGet]
@@ -34,7 +36,7 @@ namespace CSS_Server.Controllers
             _logger.LogInformation("GetCameras requested");
 
             //Get the cameras from the manager
-            List<Camera> cameras = CameraManager.Instance.Cameras;
+            List<Camera> cameras = _cameraManager.Cameras;
 
             //return status code 200 with the json representation from the cameras
             return Ok(_cameraJsonProvider.GetCameras(cameras));
@@ -46,7 +48,7 @@ namespace CSS_Server.Controllers
 
             CameraIndexViewModel model = new CameraIndexViewModel()
             {
-                Cameras = CameraManager.Instance.Cameras,
+                Cameras = _cameraManager.Cameras,
             };
 
             ViewData["Title"] = "View all " + model.Cameras.Count + " camera's";
