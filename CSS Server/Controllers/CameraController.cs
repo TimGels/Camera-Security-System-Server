@@ -31,6 +31,8 @@ namespace CSS_Server.Controllers
                 Cameras = CameraManager.Instance.Cameras,
             };
 
+            ViewBag.Title = "View all " + model.Cameras.Count + " camera's";
+
             return View(model);
         }
     }
