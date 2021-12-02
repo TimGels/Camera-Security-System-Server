@@ -1,5 +1,8 @@
-﻿using System.Net.WebSockets;
+﻿using System;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CSS_Server.Models
 {
@@ -51,10 +54,7 @@ namespace CSS_Server.Models
 
         public bool IsOnline()
         {
-            if(_webSocket != null && _webSocket.State == WebSocketState.Open)
-                return true;
-
-            return false;
+            return (_webSocket != null && _webSocket.State == WebSocketState.Open);
         }
     }
 }

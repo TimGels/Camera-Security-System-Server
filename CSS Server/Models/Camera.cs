@@ -15,9 +15,7 @@
         {
             get 
             {
-                if (CameraConnection != null && CameraConnection.IsOnline())
-                    return true;
-                return false;
+                return (CameraConnection != null && CameraConnection.IsOnline());
             }
         }
         public bool Validate(string password)

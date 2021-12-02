@@ -3,6 +3,10 @@ using System.Net.WebSockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
+using System.Linq;
 
 namespace CSS_Server.Models
 {
@@ -86,12 +90,7 @@ namespace CSS_Server.Models
 
         private Camera FindCamera(int id)
         {
-            foreach(Camera camera in this.cameras)
-            {
-                if(camera.Id == id)
-                    return camera;
-            }
-            return null;
+           return this._cameras.FirstOrDefault(camera => camera.Id == id, null); 
         }
     }
 }

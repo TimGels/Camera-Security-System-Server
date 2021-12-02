@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace CSS_Server.Controllers
 {
@@ -64,7 +65,7 @@ namespace CSS_Server.Controllers
             {
                 //accept the incoming websocket connection:
                 using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                Camera camera = await CameraManager.Instance.ValidateCameraConnection(webSocket);
+                Camera camera = await _cameraManager.ValidateCameraConnection(webSocket);
 
                 if (camera != null)
                 {
