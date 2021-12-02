@@ -1,5 +1,6 @@
 using CSS_Server.JsonProvider;
 using CSS_Server.Models;
+using CSS_Server.Models.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Logging.AddDatabase();
 
 builder.Services.AddSingleton<CameraJsonProvider>();
 builder.Services.AddSingleton<CameraManager>();
