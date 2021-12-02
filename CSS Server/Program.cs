@@ -1,61 +1,30 @@
-using CSS_Server.JsonProvider;
-using CSS_Server.Models;
-using CSS_Server.Models.Logger;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
-builder.Logging.AddDatabase();
-
-builder.Services.AddSingleton<CameraJsonProvider>();
-builder.Services.AddSingleton<CameraManager>();
-
-//// Add services to the container.
-////builder.Services.AddRazorPages();
-//builder.Services.AddControllers()
-
-builder.Services.AddControllersWithViews()
-    .AddNewtonsoftJson();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseExceptionHandler("/Error");
-//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//    app.UseHsts();
-//}
-
-//app.UseHttpsRedirection();
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-//add websocket config
-var webSocketOptions = new WebSocketOptions()
+namespace CSS_Server
 {
-    KeepAliveInterval = TimeSpan.FromSeconds(120),
-};
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
 
-app.UseWebSockets(webSocketOptions);
-
-
-//app.MapControllers();
-
-app.UseRouting();
-
-////app.UseAuthorization();
-
-////app.MapRazorPages();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((logging) =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                    logging.AddDebug();
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+        }
+    }
+}
