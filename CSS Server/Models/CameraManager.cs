@@ -13,30 +13,16 @@ namespace CSS_Server.Models
     public sealed class CameraManager
     {
         private readonly ILogger<CameraManager> _logger;
-        private List<Camera> _cameras = new List<Camera>();
+        private List<Camera> _cameras;
 
         public CameraManager(ILogger<CameraManager> logger)
         {
             _logger = logger;
 
             //read coupled cameras from database and add them to the list.
+            _cameras = Camera.GetAll();
 
-            //Test data:
-            _cameras.Add(new Camera()
-            {
-                Id = 0,
-                Name = "First Camera",
-                Password = "123456",
-            });
-
-            _cameras.Add(new Camera()
-            {
-                Id = 1,
-                Name = "Second Camera",
-                Password = "HelloWorld",
-            });
-
-            _logger.LogInformation("Created {0} cameras for testing!", _cameras.Count);
+            _logger.LogInformation("Got {0} cameras from the database!", _cameras.Count);
         }
 
         public List<Camera> Cameras
