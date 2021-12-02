@@ -4,16 +4,23 @@
     {
         public Camera()
         {
-
         }
 
+        public CameraConnection CameraConnection { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Password { get; set; }
 
-        /// <summary>
-        /// Now a simple getter and setter, can be replaced in the future with logic checking the websocketConnection
-        /// </summary>
-        public bool Connected { get; set; }
-
+        public bool Connected
+        {
+            get 
+            {
+                return (CameraConnection != null && CameraConnection.IsOnline());
+            }
+        }
+        public bool Validate(string password)
+        {
+            return Password == password;
+        }
     }
 }
