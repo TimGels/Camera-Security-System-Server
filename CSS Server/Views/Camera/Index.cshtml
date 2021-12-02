@@ -13,6 +13,6 @@
     @*@foreach(Camera camera in (List<Camera>)ViewData["cameras"])*@
     @foreach(Camera camera in Model.Cameras)
     {
-        <li>@camera.Id - @camera.Name - @camera.Connected</li>
+        <li>@camera.Id - @camera.Name - @camera.IsConnected()</li>
     }
 </ul>

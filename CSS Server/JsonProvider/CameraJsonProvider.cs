@@ -20,7 +20,7 @@ namespace CSS_Server.JsonProvider
             JObject jCamera = new JObject();
             jCamera["id"] = camera.Id;
             jCamera["name"] = camera.Name;
-            jCamera["connected"] = camera.Connected;
+            jCamera["connected"] = camera.IsConnected();
 
             return jCamera;
         }
