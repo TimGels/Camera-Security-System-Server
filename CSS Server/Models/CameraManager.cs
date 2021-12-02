@@ -1,46 +1,43 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace CSS_Server.Models
 {
     public sealed class CameraManager
     {
-        private static readonly CameraManager instance = new CameraManager();
+        private readonly ILogger<CameraManager> _logger;
+        private List<Camera> _cameras = new List<Camera>();
 
-        private List<Camera> cameras = new List<Camera>();
-
-        private CameraManager()
+        public CameraManager(ILogger<CameraManager> logger)
         {
+            _logger = logger;
+
             //read coupled cameras from database and add them to the list.
 
             //Test data:
-            cameras.Add(new Camera()
+            _cameras.Add(new Camera()
             {
                 Id = 0,
                 Name = "First Camera",
                 Password = "123456",
             });
 
-            cameras.Add(new Camera()
+            _cameras.Add(new Camera()
             {
                 Id = 1,
                 Name = "Second Camera",
                 Password = "HelloWorld",
             });
-        }
 
-        public static CameraManager Instance
-        {
-            get
-            {
-                return instance;
-            }
+            _logger.LogInformation("Created {0} cameras for testing!", _cameras.Count);
         }
 
         public List<Camera> Cameras
         {
-            get { return cameras; }
+            get { return _cameras; }
             //set { myVar = value; }
         }
 

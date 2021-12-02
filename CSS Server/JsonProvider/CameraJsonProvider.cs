@@ -1,30 +1,40 @@
 ﻿using CSS_Server.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace CSS_Server.JsonProvider
 {
-    public static class CameraJsonProvider
+    public class CameraJsonProvider
     {
-        public static JObject GetCamera(Camera camera)
+        private readonly ILogger<CameraJsonProvider> _logger;
+        public CameraJsonProvider(ILogger<CameraJsonProvider> logger)
         {
-            var json = new JObject();
-            json["id"] = camera.Id;
-            json["name"] = camera.Name;
-            json["connected"] = camera.Connected;
-
-            return json;
+            _logger = logger;
         }
 
-        public static JArray GetCameras(List<Camera> cameras)
+        public JObject GetJCamera(Camera camera)
         {
-            var json = new JArray();
+            _logger.LogTrace("Converting camera {0} to JSON", camera.Id);
+
+            JObject jCamera = new JObject();
+            jCamera["id"] = camera.Id;
+            jCamera["name"] = camera.Name;
+            jCamera["connected"] = camera.Connected;
+
+            return jCamera;
+        }
+
+        public JArray GetCameras(List<Camera> cameras)
+        {
+            JArray jCameras = new JArray();
 
             foreach (Camera camera in cameras)
             {
-                json.Add(GetCamera(camera));
+                jCameras.Add(GetJCamera(camera));
             }
 
-            return json;
+            return jCameras;
         }
     }
 }

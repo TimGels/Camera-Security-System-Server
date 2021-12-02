@@ -4,11 +4,27 @@ using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.WebSockets;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CSS_Server.Controllers
 {
     public class CameraController : Controller
     {
+        private readonly ILogger<CameraController> _logger;
+        private readonly CameraJsonProvider _cameraJsonProvider;
+        private readonly CameraManager _cameraManager;
+
+        public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
+        {
+            _logger = logger;
+            _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
+            _cameraManager = provider.GetRequiredService<CameraManager>();
+        }
+
         //[HttpGet]
         //public async Task<IActionResult> Index()
         //{
@@ -19,18 +35,22 @@ namespace CSS_Server.Controllers
         //[Produces("application/json")]
         public async Task<IActionResult> GetCameras()
         {
+            _logger.LogInformation("GetCameras requested");
+
             //Get the cameras from the manager
-            List<Camera> cameras = CameraManager.Instance.Cameras;
+            List<Camera> cameras = _cameraManager.Cameras;
 
             //return status code 200 with the json representation from the cameras
-            return Ok(CameraJsonProvider.GetCameras(cameras));
+            return Ok(_cameraJsonProvider.GetCameras(cameras));
         }
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Index requested");
+
             CameraIndexViewModel model = new CameraIndexViewModel()
             {
-                Cameras = CameraManager.Instance.Cameras,
+                Cameras = _cameraManager.Cameras,
             };
 
             ViewData["Title"] = "View all " + model.Cameras.Count + " camera's";
