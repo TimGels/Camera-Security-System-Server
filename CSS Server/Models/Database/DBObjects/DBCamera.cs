@@ -1,6 +1,5 @@
 ﻿using CSS_Server.Models.Database.Repositories;
 using SQLite;
-using System.ComponentModel.DataAnnotations;
 
 namespace CSS_Server.Models.Database
 {

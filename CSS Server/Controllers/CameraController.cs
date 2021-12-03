@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using CSS_Server.Models.Database;
 
 namespace CSS_Server.Controllers
 {
@@ -17,12 +18,14 @@ namespace CSS_Server.Controllers
     {
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
+        private readonly RepositoryProvider _repositoryProvider;
         private readonly CameraManager _cameraManager;
 
         public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
         {
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
+            _repositoryProvider = provider.GetRequiredService<RepositoryProvider>();
             _cameraManager = provider.GetRequiredService<CameraManager>();
         }
 

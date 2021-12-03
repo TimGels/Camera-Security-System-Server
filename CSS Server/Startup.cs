@@ -1,11 +1,10 @@
 ﻿using CSS_Server.JsonProvider;
 using CSS_Server.Models;
+using CSS_Server.Models.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 
 namespace CSS_Server
@@ -30,6 +29,7 @@ namespace CSS_Server
         {
             services.AddSingleton<CameraJsonProvider>();
             services.AddSingleton<CameraManager>();
+            services.AddSingleton<RepositoryProvider>();
             services.AddControllersWithViews()
                 .AddNewtonsoftJson();
             //services.AddRazorPages();
