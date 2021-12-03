@@ -1,10 +1,13 @@
-﻿using SQLite;
+﻿using CSS_Server.Models.Database.Repositories;
+using SQLite;
+using System.ComponentModel.DataAnnotations;
 
 namespace CSS_Server.Models.Database
 {
     /// <summary>
     /// Class which represents the Camera table in the database.
     /// </summary>
+    [Repository(Name = "CameraRepository")]
     [Table("Camera")]
     public class DBCamera
     {

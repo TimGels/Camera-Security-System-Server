@@ -5,7 +5,7 @@ using SQLite;
 
 namespace CSS_Server.Models.Database.Repositories
 {
-    public class CameraRepository : IRepository<DBCamera>
+    public class CameraRepository : RepositoryInterface
     {
         private string _tableName = "Camera";
         public void Delete(int id)
