@@ -41,7 +41,7 @@ namespace CSS_Server.Models
         }
         #endregion
 
-        #region properties
+        #region Properties
         private DBCamera _dbCamera;
         private static CameraRepository _repository = new CameraRepository();
 

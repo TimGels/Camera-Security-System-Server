@@ -1,5 +1,6 @@
 ﻿using CSS_Server.JsonProvider;
 using CSS_Server.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
@@ -32,6 +33,23 @@ namespace CSS_Server
             services.AddSingleton<CameraManager>();
             services.AddControllersWithViews()
                 .AddNewtonsoftJson();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                });
+
+            //services.AddMvc();
+
+            // authentication 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
+
             //services.AddRazorPages();
             //services.AddControllers();
         }
@@ -49,11 +67,12 @@ namespace CSS_Server
             //    app.UseHsts();
             //}
 
-            //app.UseHttpsRedirection();
-            //app.UseAuthorization();
+            app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseWebSockets(new WebSocketOptions()
             {
