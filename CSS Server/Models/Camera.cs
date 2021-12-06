@@ -24,7 +24,6 @@ namespace CSS_Server.Models
                 Password = password
             };
 
-
             _dbCamera = dBCamera;
             _repository.Insert(dBCamera);
         }
@@ -37,13 +36,12 @@ namespace CSS_Server.Models
         private Camera(DBCamera dBCamera)
         {
             _dbCamera = dBCamera;
-            _repository = new CameraRepository();
         }
         #endregion
 
         #region properties
         private DBCamera _dbCamera;
-        private static CameraRepository _repository = new CameraRepository();
+        private static SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
 
         public CameraConnection CameraConnection { get; set; }
 
