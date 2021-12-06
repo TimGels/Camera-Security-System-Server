@@ -2,6 +2,8 @@
 using CSS_Server.Models.Database.Repositories;
 using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -9,18 +11,23 @@ namespace CSS_Server.Controllers
 {
     public class AccountController : Controller
     {
-        private AuthenticationManager _authenticationManager;
+        private readonly ILogger<AccountController> _logger;
+        private readonly AuthenticationManager _authenticationManager;
 
-        public AccountController(AuthenticationManager authenticationManager)
+        public AccountController(ILogger<AccountController> logger, IServiceProvider provider)
         {
-            _authenticationManager = authenticationManager;
+            _logger = logger;
+            _authenticationManager = provider.GetRequiredService<AuthenticationManager>();
         }
 
-        [HttpPost]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || Request.Method == "GET")
+            {
+                ViewData["Title"] = "CSS log-in";
+                ViewData["Page"] = "login";
                 return View(form);
+            }
             try
             {
                 User user = new UserRepository().GetByEmail(form.Email);
@@ -35,6 +42,12 @@ namespace CSS_Server.Controllers
                 ModelState.AddModelError("summary", ex.Message);
                 return View(form);
             }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _authenticationManager.SignOut(this.HttpContext);
+            return RedirectToAction("LogIn", "Account");
         }
 
     }

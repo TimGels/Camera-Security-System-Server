@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
-
+using CSS_Server.Models.Database.DBObjects;
 using SQLite;
 
 namespace CSS_Server.Models.Database
@@ -23,6 +23,7 @@ namespace CSS_Server.Models.Database
             //Create all tables if they don't exist
             using SQLiteConnection connection = CreateConnection();
             connection.CreateTable<DBCamera>();
+            connection.CreateTable<DBUser>();
         }
 
         #region Properties

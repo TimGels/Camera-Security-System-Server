@@ -17,7 +17,7 @@ namespace CSS_Server.Models
             await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
         }
 
-        public async void SignOut(HttpContext httpContext)
+        public async Task SignOut(HttpContext httpContext)
         {
             await httpContext.SignOutAsync();
         }

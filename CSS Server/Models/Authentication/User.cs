@@ -57,7 +57,6 @@ namespace CSS_Server.Models
         public bool Validate(string password)
         {
             return HashHelper.Verify(password, _dbUser.Password, _dbUser.Salt);
-
         }
 
         public static User CreateUser(string email, string userName, string password)

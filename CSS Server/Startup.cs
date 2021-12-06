@@ -50,6 +50,8 @@ namespace CSS_Server
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             });
 
+            services.AddTransient<AuthenticationManager>();
+
             //services.AddRazorPages();
             //services.AddControllers();
         }
@@ -85,7 +87,7 @@ namespace CSS_Server
                 //endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Camera}/{action=Index}/{id?}");
             });
         }
     }

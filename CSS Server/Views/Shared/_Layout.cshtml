@@ -3,12 +3,38 @@
 <html>
 <html lang="en">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="~/css/general.css" asp-append-version="true" />
+
+
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width" />
         <title>@ViewData["Title"]</title>
-        <link rel="stylesheet" href="~/css/stylesheet.css" asp-append-version="true" />
+
+    @if((string)ViewData["Page"] == "camera-overview")
+    {
+        <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    }
+    @if((string)ViewData["Page"] == "login")
+    {
+        <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    }
+
     </head>
     <body>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <nav>
+          <a href="#"><i class="fa fa-fw fa-home"></i> Home</a> 
+          <a href="#"><i class="fa fa-fw fa-search"></i> Search</a> 
+          <a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a> 
+          <a href="@Url.Action("LogOut", "Account")"><i class="fa fa-fw fa-user"></i>Logout</a>
+          <div>Hola @User.Identity.Name</div>
+        </nav>
+    }
+        
         <div>
             @RenderBody()
         </div>
