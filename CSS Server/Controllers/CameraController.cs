@@ -29,12 +29,6 @@ namespace CSS_Server.Controllers
             _cameraManager = provider.GetRequiredService<CameraManager>();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    return Ok("Hello World!");
-        //}
-
         [HttpGet]
         //[Produces("application/json")]
         public async Task<IActionResult> GetCameras()
