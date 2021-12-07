@@ -103,10 +103,8 @@ namespace CSS_Server.Models
 
         public async Task Send(JObject data)
         {
-            byte[] dataToSend = Encoding.UTF8.GetBytes("Hello this is data i will sent");
-
+            byte[] dataToSend = Encoding.UTF8.GetBytes(data.ToString());
             await _webSocket.SendAsync(new ArraySegment<byte>(dataToSend, 0, dataToSend.Length), WebSocketMessageType.Text, true, CancellationToken.None);
-
         }
 
         #region events

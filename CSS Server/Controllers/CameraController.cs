@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
+using CSS_Server.Models.EventArgs;
 
 namespace CSS_Server.Controllers
 {
@@ -78,11 +79,14 @@ namespace CSS_Server.Controllers
 
             JArray footage = null;
 
-            //add event listener to footage all received for camera.
-            camera.CameraConnection.FootageAllReceived += (sender, e) => 
+            // Declare handler for receiving event.
+            EventHandler<FootageAllReceivedEventArgs> footageReceivedHandler = (sender, e) =>
             {
                 footage = e.Footage;
             };
+
+            //add event listener to footage all received for camera.
+            camera.CameraConnection.FootageAllReceived += footageReceivedHandler;
 
             //make footage_all request to camera
             JObject request = new();
@@ -95,6 +99,9 @@ namespace CSS_Server.Controllers
             {
                 Thread.Sleep(250);
             }
+
+            // Unsubscribe from event handler.
+            camera.CameraConnection.FootageAllReceived -= footageReceivedHandler;
 
             //return the view with the viewmodel
             return View(new CameraFootageViewModel()
