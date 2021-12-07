@@ -1,4 +1,5 @@
 ﻿using CSS_Server.Models;
+using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
 using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace CSS_Server.Controllers
             }
             try
             {
-                User user = new UserRepository().GetByEmail(form.Email);
+                User user = new SQLiteRepository<DBUser>().GetByEmail(form.Email);
 
                 if(user != null && user.Validate(form.Password))
                     await _authenticationManager.SignIn(this.HttpContext, user);

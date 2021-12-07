@@ -3,12 +3,8 @@
 namespace CSS_Server.Models.Database.DBObjects
 {
     [Table("User")]
-    public class DBUser
+    public class DBUser : AbstractTable
     {
-        [PrimaryKey, AutoIncrement]
-        [Column("id")]
-        public int Id { get; set; }
-
         [Unique]
         [Column("email")]
         public string Email { get; set; }
