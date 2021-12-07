@@ -1,0 +1,30 @@
+﻿@using CSS_Server.ViewModels
+@using Newtonsoft.Json.Linq
+
+@{
+    Layout = "_Layout";
+}
+
+@model CameraFootageViewModel
+
+<h1>Footage for Camera: @Model.CameraName (@Model.CameraId)</h1>
+
+<main class="main">
+
+    @if (Model.Footage != null && Model.Footage.Count() > 0)
+    {
+        <div class="cameras-container">
+
+            @foreach (JObject footage in Model.Footage)
+            {
+                <div class="single-camera-block">
+                    <img src="media/camerafootage.jpg" alt="footage">
+                    <h2>@footage["filename"]</h2>
+                </div>
+            }
+        </div>
+    } else
+    {
+        <h1>No footage for this camera or camera is not found/offline</h1>
+    }
+</main>

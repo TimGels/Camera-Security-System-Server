@@ -48,13 +48,11 @@ namespace CSS_Server.Models
             bool isIncorrectRequest = false;
 
             //Try to parse the password value from the sent json.
-            JToken jPassword;
-            if(!firstData.TryGetValue("password", out jPassword))
+            if (!firstData.TryGetValue("password", out JToken jPassword))
                 isIncorrectRequest = true;
 
             //Try to parse the id value from the sent json.
-            JToken JId;
-            if(!firstData.TryGetValue("id", out JId))
+            if (!firstData.TryGetValue("id", out JToken JId))
                 isIncorrectRequest = true;
 
             if (isIncorrectRequest)
