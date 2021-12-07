@@ -51,11 +51,8 @@ namespace CSS_Server.Utilities
                 randBytes = new byte[1];
             }
 
-            // Create a new RNGCryptoServiceProvider.
-            RNGCryptoServiceProvider rand = new RNGCryptoServiceProvider();
-
-            // Fill the buffer with random bytes.
-            rand.GetBytes(randBytes);
+            // Fill the buffer with a cryptographically strong random sequence of values.
+            RandomNumberGenerator.Create().GetBytes(randBytes);
 
             // return the bytes.
             return randBytes;
