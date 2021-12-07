@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CSS_Server.Models.Database.DBObjects;
@@ -35,11 +36,11 @@ namespace CSS_Server.Models.Database.Repositories
             return connection.CreateCommand(sql, id).ExecuteQuery<T>().FirstOrDefault();
         }
 
-        public IQueryable<T> GetAll()
+        public List<T> GetAll()
         {
             using SQLiteConnection connection = DatabaseHandler.Instance.CreateConnection();
             var query = new TableQuery<T>(connection);
-            return query.AsQueryable<T>();
+            return query.AsQueryable<T>().ToList<T>();
         }
 
         public void Insert(T entity)

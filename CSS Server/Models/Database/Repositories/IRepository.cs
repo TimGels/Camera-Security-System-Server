@@ -1,4 +1,5 @@
 using CSS_Server.Models.Database.DBObjects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CSS_Server.Models.Database
@@ -7,7 +8,7 @@ namespace CSS_Server.Models.Database
     {
         T Get(int id);
         void Delete(int id);
-        IQueryable<T> GetAll();
+        List<T> GetAll();
         void Update(T entity);
         void Insert(T entity);
     }
