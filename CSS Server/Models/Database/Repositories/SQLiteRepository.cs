@@ -14,12 +14,9 @@ namespace CSS_Server.Models.Database.Repositories
 
         public SQLiteRepository()
         {
-            // Get the TableName attribute of T, so every SQLiteRepository instance
+            // Get the TableAttribute of T, so every SQLiteRepository instance
             // will have the correct table name.
-            _tableName = (typeof(T).GetCustomAttributes().FirstOrDefault(current =>
-            {
-                return current.GetType() == typeof(TableAttribute);
-            }) as TableAttribute).Name;
+            _tableName = typeof(T).GetCustomAttribute<TableAttribute>().Name;
 
             // This could be simplified if the DB classes were named exactly like
             // their tables in the database -->  _tableName = typeof(T).Name;
