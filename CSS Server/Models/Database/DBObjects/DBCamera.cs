@@ -17,5 +17,8 @@ namespace CSS_Server.Models.Database.DBObjects
 
         [Column("passwd")]
         public string Password { get; set; }
+
+        [Column("salt")]
+        public string Salt { get; set; }
     }
 }

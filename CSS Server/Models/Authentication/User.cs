@@ -47,6 +47,22 @@ namespace CSS_Server.Models
             }
         }
 
+        /// <summary>
+        /// property setter for the Password of the user.
+        /// A plain text string can be given as value. This setter will create a hash and a salt.
+        /// After setting, the values will be updated in the database.
+        /// </summary>
+        public string Password
+        {
+            set {
+                //create hash and salt for the given password.
+                _dbUser.Password = HashHelper.GenerateHash(value, out string salt);
+                _dbUser.Salt = salt;
+                _repository.Update(_dbUser);
+            }
+        }
+
+
         #endregion
 
         /// <summary>
