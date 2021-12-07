@@ -1,0 +1,23 @@
+﻿@using CSS_Server.ViewModels
+@using CSS_Server.Models
+
+@{
+    Layout = "_Layout";
+}
+
+@model LogInViewModel
+
+<main class="main_login">
+    <form action="#" method="post">
+        <h1>
+            CameraSecuritySystem
+        </h1>
+        <label for="Email">Email</label>
+        <input asp-for="Email" name="Email" type="text">
+
+        <label for="password">Password</label>
+        <input asp-for="Password" name="password" type="password">
+
+        <input type="submit" value="Login">
+    </form>
+</main>

@@ -23,6 +23,11 @@ namespace CSS_Server.Models.Database.Repositories
             // their tables in the database -->  _tableName = typeof(T).Name;
         }
 
+        public string TableName
+        {
+            get { return _tableName; }
+        }
+
         public void Delete(int id)
         {
             using SQLiteConnection connection = DatabaseHandler.Instance.CreateConnection();

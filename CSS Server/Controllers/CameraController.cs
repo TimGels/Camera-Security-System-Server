@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSS_Server.Controllers
 {
@@ -45,6 +46,7 @@ namespace CSS_Server.Controllers
             return Ok(_cameraJsonProvider.GetCameras(cameras));
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             _logger.LogInformation("Index requested");
@@ -55,6 +57,7 @@ namespace CSS_Server.Controllers
             };
 
             ViewData["Title"] = "View all " + model.Cameras.Count + " camera's";
+            ViewData["Page"] = "camera-overview";
 
             return View(model);
         }

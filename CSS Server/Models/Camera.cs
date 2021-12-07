@@ -39,7 +39,7 @@ namespace CSS_Server.Models
         }
         #endregion
 
-        #region properties
+        #region Properties
         private DBCamera _dbCamera;
         private static SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
 

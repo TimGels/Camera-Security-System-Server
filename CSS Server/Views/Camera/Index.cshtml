@@ -7,12 +7,17 @@
 
 @model CameraIndexViewModel
 
-<h1>Camera's</h1>
 
-<ul>
-    @*@foreach(Camera camera in (List<Camera>)ViewData["cameras"])*@
-    @foreach(Camera camera in Model.Cameras)
-    {
-        <li>@camera.Id - @camera.Name - @camera.IsConnected()</li>
-    }
-</ul>
+<main class="main_dashboard">
+    <h1>Camera's</h1>
+    <div class="cameras-container">
+
+    @foreach (Camera camera in Model.Cameras)
+        {
+            <div class="single-camera-block">
+                <img src="media/camerafootage.jpg" alt="footage">
+                <h2>Camera: @camera.Name (@camera.Id)</h2>
+            </div>
+        }
+    </div>
+</main>
