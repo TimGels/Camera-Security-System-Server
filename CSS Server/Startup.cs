@@ -69,7 +69,7 @@ namespace CSS_Server
             //    app.UseHsts();
             //}
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseAuthentication();

@@ -1,4 +1,4 @@
-﻿using CSS_Server.Models.Database;
+﻿using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
 using System.Collections.Generic;
 using System.Linq;

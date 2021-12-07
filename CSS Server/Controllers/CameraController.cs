@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
+using CSS_Server.Models.EventArgs;
 
 namespace CSS_Server.Controllers
 {
@@ -62,6 +64,54 @@ namespace CSS_Server.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public async Task<IActionResult> Footage(int id)
+        {
+            //Check if camera is online.
+            Camera camera = _cameraManager.Cameras.Find(x => x.Id == id);
+            if (camera == null || !camera.IsConnected()) {
+                return View(new CameraFootageViewModel()
+                {
+                    CameraId = -1,
+                    CameraName = "Unknown or Oflline",
+            }); 
+            }
+
+            JArray footage = null;
+
+            // Declare handler for receiving event.
+            EventHandler<FootageAllReceivedEventArgs> footageReceivedHandler = (sender, e) =>
+            {
+                footage = e.Footage;
+            };
+
+            //add event listener to footage all received for camera.
+            camera.CameraConnection.FootageAllReceived += footageReceivedHandler;
+
+            //make footage_all request to camera
+            JObject request = new();
+            request["type"] = MessageType.FOOTAGE_REQUEST_ALL.ToString();
+
+            await camera.CameraConnection.Send(request);
+
+            //wait for the event to happen
+            while(footage == null)
+            {
+                Thread.Sleep(250);
+            }
+
+            // Unsubscribe from event handler.
+            camera.CameraConnection.FootageAllReceived -= footageReceivedHandler;
+
+            //return the view with the viewmodel
+            return View(new CameraFootageViewModel()
+            {
+                Footage = footage,
+                CameraId = camera.Id,
+                CameraName = camera.Name,
+            });
+        }
+
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
@@ -72,7 +122,7 @@ namespace CSS_Server.Controllers
 
                 if (camera != null)
                 {
-                    camera.CameraConnection = new CameraConnection(webSocket);
+                    camera.CameraConnection = new CameraConnection(webSocket, _logger) ;
                     await camera.CameraConnection.StartReading();
                 }
                 else
