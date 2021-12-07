@@ -1,4 +1,5 @@
-﻿using SQLite;
+using CSS_Server.Models.Database.DBObjects;
+using SQLite;
 
 namespace CSS_Server.Models.Database
 {
@@ -6,12 +7,8 @@ namespace CSS_Server.Models.Database
     /// Class which represents the Camera table in the database.
     /// </summary>
     [Table("Camera")]
-    public class DBCamera
+    public class DBCamera : AbstractTable
     {
-        [PrimaryKey, AutoIncrement]
-        [Column("id")]
-        public int Id { get; set; }
-
         [Column("name")]
         public string Name { get; set; }
 
