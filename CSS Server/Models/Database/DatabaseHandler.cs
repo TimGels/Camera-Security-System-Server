@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using CSS_Server.Models.Database.DBObjects;
@@ -54,7 +55,10 @@ namespace CSS_Server.Models.Database
 
             //Check if key is not set. If so, stop further execution of the app.
             if(key == null)
+            {
+                Debug.WriteLine("No DATABASE_KEY set, set it with the environment vars or with secrets.json");
                 Environment.Exit(1);
+            }
 
             return key;
         }

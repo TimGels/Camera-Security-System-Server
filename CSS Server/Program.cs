@@ -19,7 +19,7 @@ namespace CSS_Server
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.AddEnvironmentVariables();
-                    config.AddJsonFile("secrets.json");
+                    config.AddJsonFile("secrets.json", true);
                 })
                 .ConfigureLogging((logging) =>
                 {
