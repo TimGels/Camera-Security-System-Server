@@ -15,11 +15,11 @@
     {
         <div class="cameras-container">
 
-            @foreach (JObject footage in Model.Footage)
+            @foreach (string footage in Model.Footage)
             {
                 <div class="single-camera-block">
                     <img src="media/camerafootage.jpg" alt="footage">
-                    <h2>@footage["filename"]</h2>
+                    <h2>@footage</h2>
                 </div>
             }
         </div>

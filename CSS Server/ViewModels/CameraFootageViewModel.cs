@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace CSS_Server.ViewModels
 {
     public class CameraFootageViewModel
     {
-        public JArray Footage { get; set; }
+        public List<string> Footage { get; set; }
         public int CameraId { get; set; }
         public string CameraName { get; set; }
     }

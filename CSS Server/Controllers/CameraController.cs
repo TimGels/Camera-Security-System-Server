@@ -67,11 +67,11 @@ namespace CSS_Server.Controllers
                 return View(new CameraFootageViewModel()
                 {
                     CameraId = -1,
-                    CameraName = "Unknown or Oflline",
-            }); 
+                    CameraName = "Unknown or Offline",
+                }); 
             }
 
-            JArray footage = null;
+            List<string> footage = null;
 
             // Declare handler for receiving event.
             EventHandler<FootageAllReceivedEventArgs> footageReceivedHandler = (sender, e) =>
@@ -83,10 +83,7 @@ namespace CSS_Server.Controllers
             camera.CameraConnection.FootageAllReceived += footageReceivedHandler;
 
             //make footage_all request to camera
-            JObject request = new();
-            request["type"] = MessageType.FOOTAGE_REQUEST_ALL.ToString();
-
-            await camera.CameraConnection.Send(request);
+            await camera.CameraConnection.SendAsync(new Message(MessageType.FOOTAGE_REQUEST_ALL));
 
             //wait for the event to happen
             while(footage == null)

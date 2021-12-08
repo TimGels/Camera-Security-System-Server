@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Collections.Generic;
 
 namespace CSS_Server.Models.EventArgs
 {
     public class FootageAllReceivedEventArgs
     {
-        public JArray Footage { get; set; }
+        public List<string> Footage { get; set; }
     }
 }
