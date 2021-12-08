@@ -17,8 +17,7 @@ namespace CSS_Server.Utilities
         {
             byte[] saltBytes = CreateRandomSalt(64);
 
-            var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
-
+            using var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
             salt = Convert.ToBase64String(saltBytes);
             return Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
         }
@@ -26,7 +25,7 @@ namespace CSS_Server.Utilities
         public static bool Verify(string password, string hash, string salt)
         {
             var saltBytes = Convert.FromBase64String(salt);
-            var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
+            using var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
             return Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256)) == hash;
         }
 
@@ -41,16 +40,7 @@ namespace CSS_Server.Utilities
         private static byte[] CreateRandomSalt(int length)
         {
             // Create a buffer
-            byte[] randBytes;
-
-            if (length >= 1)
-            {
-                randBytes = new byte[length];
-            }
-            else
-            {
-                randBytes = new byte[1];
-            }
+            byte[] randBytes = length >= 1 ? new byte[length] : new byte[1];
 
             // Fill the buffer with a cryptographically strong random sequence of values.
             _randomNummerGenerator.GetBytes(randBytes);

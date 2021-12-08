@@ -15,7 +15,7 @@ namespace CSS_Server.Models
         #endregion
 
         #region Properties
-        private DBUser _dbUser;
+        private readonly DBUser _dbUser;
         private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
 
         public int Id
