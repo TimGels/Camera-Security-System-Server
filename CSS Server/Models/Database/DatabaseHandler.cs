@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using CSS_Server.Models.Database.DBObjects;
 using SQLite;
@@ -24,6 +26,7 @@ namespace CSS_Server.Models.Database
             using SQLiteConnection connection = CreateConnection();
             connection.CreateTable<DBCamera>();
             connection.CreateTable<DBUser>();
+
         }
 
         #region Properties
@@ -44,12 +47,20 @@ namespace CSS_Server.Models.Database
 
         /// <summary>
         /// This method will be used to get the key that is used to encrypt the databasefile.
-        /// TODO: use a proper way to get a proper key. Maybe environment vars? 
         /// </summary>
         /// <returns></returns>
         private static string GetKey()
         {
-            return "testkey123";
+            string key = Startup.Configuration["DATABASE_KEY"];
+
+            //Check if key is not set. If so, stop further execution of the app.
+            if(key == null)
+            {
+                Debug.WriteLine("No DATABASE_KEY set, set it with the environment vars or with secrets.json");
+                Environment.Exit(1);
+            }
+
+            return key;
         }
 
         /// <summary>

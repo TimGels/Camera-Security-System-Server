@@ -9,7 +9,7 @@ namespace CSS_Server.Models
 {
     public class AuthenticationManager
     {
-        public async Task SignIn(HttpContext httpContext, User user, bool isPersistent = false)
+        public async Task SignIn(HttpContext httpContext, User user)
         {
             ClaimsIdentity identity = new ClaimsIdentity(this.GetUserClaims(user), CookieAuthenticationDefaults.AuthenticationScheme);
             ClaimsPrincipal principal = new ClaimsPrincipal(identity);
