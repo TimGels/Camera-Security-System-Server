@@ -27,60 +27,26 @@ namespace CSS_Server.Models
             
             while (_webSocket != null && _webSocket.State == WebSocketState.Open)
             {
-                byte[] buffer = new byte[1024 * 4];
-                WebSocketReceiveResult result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                Message message = await ReceiveMessageAsync(_webSocket);
 
-                if (result.CloseStatus.HasValue || result.MessageType == WebSocketMessageType.Close)
-                {
-                    await _webSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Received close frame, so closing this conenction", CancellationToken.None);
-                    _webSocket = null;
-                } else
-                {
-                    HandleReceivedMessage(result, buffer);
-                }
+                if (message != null)
+                    HandleReceivedMessage(message);
             }
         }
 
-        private void HandleReceivedMessage(WebSocketReceiveResult result, byte[] buffer)
+        private void HandleReceivedMessage(Message message)
         {
-            switch (result.MessageType)
-            {
-                case WebSocketMessageType.Text:
-                    HandleTextWebsocketMessage(buffer);
-                    break;
-                case WebSocketMessageType.Binary:
-                    Console.WriteLine("binary message received");
-                    break;
-            }
-        }
-
-        private void HandleTextWebsocketMessage(byte[] buffer)
-        {
-            //Convert sent data to jObject
-            JObject jData = JObject.Parse(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
-
-            if (!jData.TryGetValue("type", out JToken type))
-                return;
-
-            MessageType sentMessageType = Enum.Parse<MessageType>(type.ToString());
-
-            switch (sentMessageType)
+            switch (message.Type)
             {
                 case MessageType.LOGIN:
                     _logger.LogInformation("WTF, already accepted camera sent login message again??");
                     break;
 
                 case MessageType.FOOTAGE_RESPONSE_ALL:
-                    //Get footage from response.
-                    JArray footage_all = new JArray();
-
-                    if(jData.TryGetValue("footage", out JToken temp))
-                        footage_all = (JArray)temp;
-
-                    //call footage all received event.
+                    // Call FootageAllReceived event.
                     FootageAllReceived?.Invoke(this, new FootageAllReceivedEventArgs()
                     {
-                        Footage = footage_all
+                        Footage = message.Footage // Get footage from response.
                     });
                     break;
 
@@ -88,12 +54,11 @@ namespace CSS_Server.Models
                     // footage came in
                     // do not know what to do with it..
                     break;
+
                 default:
-                    _logger.LogInformation("WTF, unknow message type '?'", type.ToString());
+                    _logger.LogInformation("WTF, unknow message type '?'", message.Type.ToString());
                     break;
             }
-            
-
         }
 
         public bool IsOnline()
@@ -101,10 +66,57 @@ namespace CSS_Server.Models
             return (_webSocket != null && _webSocket.State == WebSocketState.Open);
         }
 
-        public async Task Send(JObject data)
+        public async Task SendAsync(Message message)
         {
-            byte[] dataToSend = Encoding.UTF8.GetBytes(data.ToString());
-            await _webSocket.SendAsync(new ArraySegment<byte>(dataToSend, 0, dataToSend.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+            byte[] dataToSend = Encoding.UTF8.GetBytes(Message.ToJson(message));
+            await _webSocket.SendAsync(dataToSend, WebSocketMessageType.Binary, true, CancellationToken.None);
+        }
+
+        // TODO: returns null, both in case of messaging gone wrong and incorrect message.
+        // In case of former, should stop reading. In case of latter, dont handle message
+        /// <summary>
+        /// Tries to receive a single message from the given websocket.
+        /// </summary>
+        /// <param name="webSocket"></param>
+        /// <returns>Message if receiving was succesfull, null otherwise.</returns>
+        public static async Task<Message> ReceiveMessageAsync(WebSocket webSocket)
+        {
+            try
+            {
+                // Create a buffer to hold the size of the message to receive.
+                byte[] sizeBuffer = new byte[sizeof(Int32)];
+                var result = await webSocket.ReceiveAsync(sizeBuffer, CancellationToken.None);
+
+                // Check if the connection is still valid, and the expected amount of bytes have been received.
+                if (result.Count != sizeof(Int32) || result.CloseStatus.HasValue ||
+                    result.MessageType == WebSocketMessageType.Close)
+                {
+                    //TODO: log
+                    return null;
+                }
+
+                // Create a buffer based on the previously received size and receive the message.
+                int size = BitConverter.ToInt32(sizeBuffer);
+                byte[] dataBuffer = new byte[size];
+                result = await webSocket.ReceiveAsync(dataBuffer, CancellationToken.None);
+
+                // Check if the connection is still valid, and the expected amount of bytes have been received.
+                if (result.Count != size || result.CloseStatus.HasValue ||
+                    result.MessageType == WebSocketMessageType.Close)
+                {
+                    //TODO: log
+                    return null;
+                }
+
+                // Create a message based on the received string with JSON.
+                string json = Encoding.UTF8.GetString(dataBuffer);
+                return Message.FromJson(json);
+            }
+            catch (Exception)
+            {
+                // TODO: log
+                return null;
+            }
         }
 
         #region events

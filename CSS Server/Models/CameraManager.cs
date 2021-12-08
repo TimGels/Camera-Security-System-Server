@@ -40,33 +40,17 @@ namespace CSS_Server.Models
         public async Task<Camera> ValidateCameraConnection(WebSocket webSocket)
         {
             //Read the first message of the connection for validation purposes.
-            byte[] buffer = new byte[1024 * 4];
-            WebSocketReceiveResult firstResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            Message message = await CameraConnection.ReceiveMessageAsync(webSocket);
 
-            JObject firstData = JObject.Parse(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
-
-            bool isIncorrectRequest = false;
-
-            //Try to parse the password value from the sent json.
-            if (!firstData.TryGetValue("password", out JToken jPassword))
-                isIncorrectRequest = true;
-
-            //Try to parse the id value from the sent json.
-            if (!firstData.TryGetValue("id", out JToken JId))
-                isIncorrectRequest = true;
-
-            if (isIncorrectRequest)
+            // Check if the message is valid.
+            if (message == null || message.Type != MessageType.LOGIN || message.Password == null || message.CameraID < 1)
                 return null;
 
-            //Convert JTokens to .NET types. 
-            int id = JId.ToObject<int>();
-            string password = jPassword.ToObject<string>();
-
             //Get the camera with its id
-            Camera camera = FindCamera(id);
+            Camera camera = FindCamera(message.CameraID);
 
             //if the camera was found and it could be validated.
-            if (camera != null && camera.Validate(password))
+            if (camera != null && camera.Validate(message.Password))
                 return camera;
 
             return null;
