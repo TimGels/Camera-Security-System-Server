@@ -8,6 +8,7 @@ namespace CSS_Server.Utilities
     /// </summary>
     public class HashHelper
     {
+        private static readonly RandomNumberGenerator _randomNummerGenerator = RandomNumberGenerator.Create();
 
         //TODO research to hashing. I now used a SO: https://stackoverflow.com/questions/52146528/how-to-validate-salted-and-hashed-password-in-c-sharp
         // I think there are better built in methods in System.Security.Cryptography...
@@ -52,7 +53,7 @@ namespace CSS_Server.Utilities
             }
 
             // Fill the buffer with a cryptographically strong random sequence of values.
-            RandomNumberGenerator.Create().GetBytes(randBytes);
+            _randomNummerGenerator.GetBytes(randBytes);
 
             // return the bytes.
             return randBytes;
