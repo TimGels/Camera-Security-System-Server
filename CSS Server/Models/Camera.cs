@@ -1,5 +1,6 @@
 ﻿using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
+using CSS_Server.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,8 +22,9 @@ namespace CSS_Server.Models
             {
                 Name = name,
                 Description = description,
-                Password = password
-            };
+                Password = HashHelper.GenerateHash(password, out string salt),
+                Salt = salt,
+        };
 
             _dbCamera = dBCamera;
             _repository.Insert(dBCamera);
@@ -82,9 +84,10 @@ namespace CSS_Server.Models
         /// </summary>
         public string Password
         {
-            get { return _dbCamera.Password; }
-            set { 
-                _dbCamera.Password = value;
+            set {
+                //create hash and salt for the given password.
+                _dbCamera.Password = HashHelper.GenerateHash(value, out string salt);
+                _dbCamera.Salt = salt;
                 _repository.Update(_dbCamera);
             }
         }
@@ -107,7 +110,7 @@ namespace CSS_Server.Models
         /// <returns></returns>
         public bool Validate(string password)
         {
-            return Password == password;
+            return HashHelper.Verify(password, _dbCamera.Password, _dbCamera.Salt);
         }
 
         #region static getters
