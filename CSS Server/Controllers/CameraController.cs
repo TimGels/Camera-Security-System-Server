@@ -1,4 +1,4 @@
-﻿using CSS_Server.JsonProvider;
+using CSS_Server.JsonProvider;
 using CSS_Server.Models;
 using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -71,12 +71,21 @@ namespace CSS_Server.Controllers
                 }); 
             }
 
-            List<string> footage = null;
+            using AutoResetEvent waitHandle = new AutoResetEvent(false);    // Is signalled by incoming event
+            List<string> footage = null;                                    // Holds the data from the event
 
             // Declare handler for receiving event.
             EventHandler<FootageAllReceivedEventArgs> footageReceivedHandler = (sender, e) =>
             {
                 footage = e.Footage;
+                try
+                {
+                    waitHandle.Set();
+                }
+                catch (ObjectDisposedException)
+                {
+                    _logger.LogWarning("FootageAllReceived waithandle disposed!");
+                }
             };
 
             //add event listener to footage all received for camera.
@@ -85,14 +94,22 @@ namespace CSS_Server.Controllers
             //make footage_all request to camera
             await camera.CameraConnection.SendAsync(new Message(MessageType.FOOTAGE_REQUEST_ALL));
 
-            //wait for the event to happen
-            while(footage == null)
-            {
-                Thread.Sleep(250);
-            }
+            // Wait untill the event happens, or 5 seconds have passed.
+            bool signalled = waitHandle.WaitOne(5 * 1000);
 
             // Unsubscribe from event handler.
             camera.CameraConnection.FootageAllReceived -= footageReceivedHandler;
+
+            if (!signalled)
+            {
+                _logger.LogWarning("FootageAllReceived event timeout!");
+                // Timeout
+                return View(new CameraFootageViewModel()
+                {
+                    CameraId = -1,
+                    CameraName = "Unresponsive",
+                });
+            }
 
             //return the view with the viewmodel
             return View(new CameraFootageViewModel()
