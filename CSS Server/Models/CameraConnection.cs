@@ -14,7 +14,7 @@ namespace CSS_Server.Models
     public class CameraConnection
     {
         private WebSocket _webSocket;
-        private ILogger<CameraController> _logger;
+        private readonly ILogger<CameraController> _logger;
 
         public CameraConnection(WebSocket webSocket, ILogger<CameraController> logger)
         {

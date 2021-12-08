@@ -40,7 +40,7 @@ namespace CSS_Server.Models
         #endregion
 
         #region Properties
-        private DBCamera _dbCamera;
+        private readonly DBCamera _dbCamera;
         private static SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
 
         public CameraConnection CameraConnection { get; set; }

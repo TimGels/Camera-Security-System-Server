@@ -37,7 +37,7 @@ namespace CSS_Server.Controllers
 
         [HttpGet]
         //[Produces("application/json")]
-        public async Task<IActionResult> GetCameras()
+        public IActionResult GetCameras()
         {
             _logger.LogInformation("GetCameras requested");
 
