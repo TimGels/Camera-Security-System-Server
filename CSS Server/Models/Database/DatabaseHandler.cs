@@ -50,7 +50,7 @@ namespace CSS_Server.Models.Database
         /// <returns></returns>
         private static string GetKey()
         {
-            string key = Environment.GetEnvironmentVariable("DATABASE_KEY");
+            string key = Startup.Configuration["DATABASE_KEY"];
 
             //Check if key is not set. If so, stop further execution of the app.
             if(key == null)

@@ -16,7 +16,7 @@ namespace CSS_Server
         /// <summary>
         /// Can be used to retreive values from appsettings(.Development).json.
         /// </summary>
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; private set; }
 
         public Startup(IConfiguration configuration)
         {
