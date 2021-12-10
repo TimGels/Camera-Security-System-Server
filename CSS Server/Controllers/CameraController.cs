@@ -32,20 +32,8 @@ namespace CSS_Server.Controllers
             _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
-        [HttpGet]
-        //[Produces("application/json")]
-        public IActionResult GetCameras()
-        {
-            _logger.LogInformation("GetCameras requested");
-
-            //Get the cameras from the manager
-            List<Camera> cameras = _cameraManager.Cameras;
-
-            //return status code 200 with the json representation from the cameras
-            return Ok(_cameraJsonProvider.GetCameras(cameras));
-        }
-
         [Authorize]
+        [HttpGet]
         public IActionResult Index()
         {
             _logger.LogInformation("Index requested");
@@ -62,6 +50,7 @@ namespace CSS_Server.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Footage(int id)
         {
             //Check if camera is online.
@@ -123,6 +112,7 @@ namespace CSS_Server.Controllers
             });
         }
 
+        [HttpGet]
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
