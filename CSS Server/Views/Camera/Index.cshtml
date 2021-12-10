@@ -7,17 +7,30 @@
 
 @model CameraIndexViewModel
 
-
 <main class="main_dashboard">
+    <button class="addButton" title="Register a new camera" onclick="location.href='@Url.Action("Register", "Camera")'">+</button>
     <h1>Camera's</h1>
     <div class="cameras-container">
 
     @foreach (Camera camera in Model.Cameras)
-        {
-            <div class="single-camera-block">
-                <img src="media/camerafootage.jpg" alt="footage">
-                <h2>Camera: @camera.Name (@camera.Id)</h2>
+    {
+        <div class="single-camera-block" cameraId="@(camera.Id)" online="@(camera.IsConnected().ToString())">
+            <img src="media/camerafootage.jpg" alt="footage">
+            <div class="camera-info">
+                <h2>Camera: @camera.Name (@camera.Id) </h2>
+                <span class="dot @(camera.IsConnected() ? "online" : "offline")"></span>
             </div>
-        }
+        </div>
+    }
     </div>
 </main>
+
+<script>
+    var cameraBlocks = document.querySelectorAll(".single-camera-block[online='True']");
+    Array.from(cameraBlocks).forEach(function(cameraBlock){
+        var cameraId = cameraBlock.getAttribute("cameraId");
+        cameraBlock.addEventListener("click", function(event){
+            location.href = "@(Url.Action("Footage", "Camera"))" + "/" + cameraId;
+        });
+    });
+</script>

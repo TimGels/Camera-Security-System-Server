@@ -1,0 +1,36 @@
+﻿@using CSS_Server.ViewModels
+@using CSS_Server.Models
+
+@{
+    Layout = "_Layout";
+}
+
+
+@model RegisterCameraViewModel
+
+<main class="main_form">
+    @if (!Model.SuccesfullAdded)
+    {
+    <form action="#" method="post">
+        <h1>
+            Register a new Camera
+        </h1>
+        <label for="Name">Name</label>
+        <input asp-for="Name" name="Email" type="text">
+
+        <label for="Description">Description</label>
+        <input asp-for="Description" name="Description" type="text">
+
+        <label for="password">Password</label>
+        <input asp-for="Password" name="password" type="password">
+
+        <input type="submit" value="Register Camera">
+    </form>
+    }
+
+    else
+    {
+        <h2>Camera was succesfully added!</h2>
+        <button onclick="location.href='@Url.Action("Index", "Camera")'">Go to camera's</button>
+    }
+</main>

@@ -113,6 +113,19 @@ namespace CSS_Server.Controllers
         }
 
         [HttpGet]
+        [HttpPost]
+        [Authorize]
+        public IActionResult Register(RegisterCameraViewModel form)
+        {
+            if(Request.Method == "GET")
+                return View(form);
+
+            //TODO add proper validation
+            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, _currentUser, out JObject errors);
+            form.Errors = errors;
+            return View(form);
+        }
+
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
