@@ -1,4 +1,5 @@
 ﻿using CSS_Server.Models;
+using CSS_Server.Models.Authentication;
 using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
 using CSS_Server.ViewModels;

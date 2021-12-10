@@ -13,6 +13,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using CSS_Server.Models.EventArgs;
+using CSS_Server.Models.Authentication;
 
 namespace CSS_Server.Controllers
 {
@@ -21,6 +22,7 @@ namespace CSS_Server.Controllers
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
         private readonly CameraManager _cameraManager;
+        private readonly BaseUser _currentUser;
 
         public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
         {
@@ -40,6 +42,7 @@ namespace CSS_Server.Controllers
 
             //return status code 200 with the json representation from the cameras
             return Ok(_cameraJsonProvider.GetCameras(cameras));
+            _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
         [Authorize]
