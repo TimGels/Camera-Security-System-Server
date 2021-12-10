@@ -22,6 +22,8 @@ namespace CSS_Server.Controllers
             _authenticationManager = provider.GetRequiredService<AuthenticationManager>();
         }
 
+        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
             if (!ModelState.IsValid || Request.Method == "GET")
@@ -46,6 +48,7 @@ namespace CSS_Server.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _authenticationManager.SignOut(this.HttpContext);
