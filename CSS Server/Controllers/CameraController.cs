@@ -29,6 +29,7 @@ namespace CSS_Server.Controllers
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
             _cameraManager = provider.GetRequiredService<CameraManager>();
+            _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
         [HttpGet]
@@ -42,7 +43,6 @@ namespace CSS_Server.Controllers
 
             //return status code 200 with the json representation from the cameras
             return Ok(_cameraJsonProvider.GetCameras(cameras));
-            _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
         [Authorize]
