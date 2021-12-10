@@ -3,7 +3,7 @@ using CSS_Server.Models.Database.Repositories;
 using CSS_Server.Utilities;
 using System;
 
-namespace CSS_Server.Models
+namespace CSS_Server.Models.Authentication
 {
     public class User
     {

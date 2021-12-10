@@ -1,12 +1,12 @@
 ﻿using CSS_Server.JsonProvider;
 using CSS_Server.Models;
+using CSS_Server.Models.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 
 namespace CSS_Server
@@ -32,7 +32,8 @@ namespace CSS_Server
             services.AddSingleton<CameraJsonProvider>();
             services.AddSingleton<CameraManager>();
             services.AddControllersWithViews()
-                .AddNewtonsoftJson();
+                .AddNewtonsoftJson()
+                .AddRazorRuntimeCompilation();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -51,6 +52,13 @@ namespace CSS_Server
             });
 
             services.AddTransient<AuthenticationManager>();
+
+            services.AddHttpContextAccessor();
+            services.AddTransient(provider =>
+            {
+                HttpContext httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+                return new BaseUser(httpContext);
+            });
 
             //services.AddRazorPages();
             //services.AddControllers();

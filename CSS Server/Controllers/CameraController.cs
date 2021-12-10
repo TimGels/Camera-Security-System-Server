@@ -13,6 +13,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using CSS_Server.Models.EventArgs;
+using CSS_Server.Models.Authentication;
 
 namespace CSS_Server.Controllers
 {
@@ -21,12 +22,14 @@ namespace CSS_Server.Controllers
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
         private readonly CameraManager _cameraManager;
+        private readonly BaseUser _currentUser;
 
         public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
         {
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
             _cameraManager = provider.GetRequiredService<CameraManager>();
+            _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
         [HttpGet]

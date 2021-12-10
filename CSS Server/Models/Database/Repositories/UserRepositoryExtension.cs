@@ -1,4 +1,5 @@
-﻿using CSS_Server.Models.Database.DBObjects;
+﻿using CSS_Server.Models.Authentication;
+using CSS_Server.Models.Database.DBObjects;
 using SQLite;
 using System.Linq;
 using System.Reflection;
