@@ -1,4 +1,5 @@
 ﻿using CSS_Server.Models;
+using CSS_Server.Models.Authentication;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
@@ -35,6 +36,15 @@ namespace CSS_Server.JsonProvider
             }
 
             return jCameras;
+        }
+
+        internal bool RegisterCamera(string name, string description, string password, BaseUser currentUser, out JObject errors)
+        {
+            //TODO add proper validation, for the password for example.
+            Camera camera = new Camera(name, description, password);
+            _logger.LogInformation("New camera with id {0} added by {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
+            errors = null;
+            return true;
         }
     }
 }
