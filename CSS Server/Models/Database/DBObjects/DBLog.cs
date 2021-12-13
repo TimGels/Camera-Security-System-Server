@@ -6,7 +6,7 @@ namespace CSS_Server.Models.Database.DBObjects
     /// Class which represents the Log table in the database.
     /// </summary>
     [Table("Logging")]
-    public class DBLog
+    public class DBLog : AbstractTable
     {
         [Column("level")]
         public int Level { get; set; }
