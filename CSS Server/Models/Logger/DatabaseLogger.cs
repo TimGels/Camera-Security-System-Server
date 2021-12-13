@@ -1,6 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
+
+using CSS_Server.Models.Database.DBObjects;
+using CSS_Server.Models.Database.Repositories;
 
 namespace CSS_Server.Models.Logger
 {
@@ -8,6 +13,7 @@ namespace CSS_Server.Models.Logger
     {
         protected readonly DatabaseLoggerProvider _databaseLoggerProvider;
         private readonly Func<DatabaseLoggerConfiguration> _getConfig;
+        private static readonly SQLiteRepository<DBLog> _repository = new SQLiteRepository<DBLog>();
 
         public DatabaseLogger([NotNull]DatabaseLoggerProvider databaseLoggerProvider, Func<DatabaseLoggerConfiguration> getConfig)
         {
@@ -30,7 +36,17 @@ namespace CSS_Server.Models.Logger
             if (!IsEnabled(logLevel) || state == null || eventId.Id != _getConfig().EventId)
                 return;
 
-            Console.WriteLine("lvl: " + logLevel + " eventid: " + eventId.Id + " Database logger! Heck yea! " + formatter(state, exception));
+            //add the log message to the database.
+            Task.Run(() =>
+            {
+                //Create a new DBLog entry and insert it using the repository.
+                _repository.Insert(new DBLog()
+                {
+                    Level = (int)logLevel,
+                    Message = formatter(state, exception),
+                });
+            });
+
         }
     }
 }
