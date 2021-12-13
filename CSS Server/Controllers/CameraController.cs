@@ -137,7 +137,7 @@ namespace CSS_Server.Controllers
 
                 if (camera != null)
                 {
-                    camera.CameraConnection = new CameraConnection(webSocket, _logger) ;
+                    camera.CameraConnection = new CameraConnection(webSocket, _logger);
                     await camera.CameraConnection.StartReading();
                 }
                 else
