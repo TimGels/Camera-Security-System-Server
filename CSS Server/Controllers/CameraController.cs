@@ -33,8 +33,6 @@ namespace CSS_Server.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            _logger.LogInformation("Index requested");
-
             CameraIndexViewModel model = new CameraIndexViewModel()
             {
                 Cameras = _cameraManager.Cameras,
@@ -90,7 +88,7 @@ namespace CSS_Server.Controllers
 
             if (!signalled)
             {
-                _logger.LogWarning("FootageAllReceived event timeout!");
+                _logger.LogWarning("FootageAllReceived event timeout! for camera (id={0})", camera.Id);
                 // Timeout
                 return View(new CameraFootageViewModel()
                 {

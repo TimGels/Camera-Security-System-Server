@@ -84,11 +84,12 @@ namespace CSS_Server.JsonProvider
             //TODO add proper validation, for the password for example.
             Camera camera = new Camera(name, description, password);
 
+            //Log the creation
+            _logger.LogInformation("New camera with id {0} created by {1} (UserId={2})", camera.Id, currentUser.UserName, currentUser.Id);
+
             //add the new camera to the camera manager:
             _cameraManager.Cameras.Add(camera);
-
-            //Log the addition
-            _logger.LogInformation("New camera with id {0} added by {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
+            _logger.LogInformation("Camera with id:{0} added to the camera manager!", camera.Id);
 
             errors = null;
             return true;
