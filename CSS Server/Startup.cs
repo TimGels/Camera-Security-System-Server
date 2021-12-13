@@ -62,6 +62,15 @@ namespace CSS_Server
             //    app.UseHsts();
             //}
 
+
+            //Add to each response the Cache-Control no cache header to precent back button
+            //feature on the client side after logging out succesfully.
+            app.Use((context, next) =>
+            {
+                context.Response.Headers["Cache-Control"] = "no-store,no-cache";
+                return next.Invoke();
+            });
+
             //app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
