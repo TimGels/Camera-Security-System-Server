@@ -18,7 +18,11 @@
             <img src="media/camerafootage.jpg" alt="footage">
             <div class="camera-info">
                 <h2>Camera: @camera.Name (@camera.Id) </h2>
-                <span class="dot @(camera.IsConnected() ? "online" : "offline")"></span>
+                <span>
+                    <span class="@(camera.IsConnected() ? "online" : "offline")"></span>
+                    <span class="trashbin"></span>
+                </span>
+                
             </div>
         </div>
     }
@@ -26,11 +30,55 @@
 </main>
 
 <script>
-    var cameraBlocks = document.querySelectorAll(".single-camera-block[online='True']");
+
+    //This function is executed when the camera was succesfully deleted from the server.
+    function deletedSuccesfully(){
+        alert("Camera was deleted succesfully");
+        location.href = "@(Url.Action("Index", "Camera"))";
+    }
+
+    //This function will be executed when the trashbin icon is clicked.
+    function trashbinOnClick(event, cameraId){
+
+        if(confirm("Are you sure you want to delete the camera?")){
+            var url = "@(Url.Action("Delete", "Camera"))" + "/" + cameraId;
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", url);
+
+            //define a function for letting the user know that the camera is deleted succesfully.
+            xhr.onload = deletedSuccesfully;
+
+            xhr.send(null);
+        }
+    }
+
+
+    //Get all camera blocks
+    var cameraBlocks = document.querySelectorAll(".single-camera-block");
+
     Array.from(cameraBlocks).forEach(function(cameraBlock){
+
+        //Get the id of the presented camera
         var cameraId = cameraBlock.getAttribute("cameraId");
-        cameraBlock.addEventListener("click", function(event){
-            location.href = "@(Url.Action("Footage", "Camera"))" + "/" + cameraId;
-        });
+
+        //get the trashbin icon
+        var trashbin = cameraBlock.querySelector(".trashbin");
+
+        //add an onclick action to the trashbin icon
+        trashbin.addEventListener("click", trashbinOnClick.bind(null, event, cameraId));
+
+        if(cameraBlock.getAttribute("online") == "False"){
+            cameraBlock.addEventListener("click", function(event){
+
+                //prevent the onclick action when the trashbin button is clicked.
+                if(event.target == trashbin){
+                    return;
+                }
+
+                location.href = "@(Url.Action("Footage", "Camera"))" + "/" + cameraId;
+            });
+        }
+        
+        
     });
 </script>

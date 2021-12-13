@@ -81,6 +81,7 @@ body {
     height: 20px;
     width: 20px;
     border-radius: 50%;
+    display: inline-block;
 }
 
 .online {
@@ -186,3 +187,20 @@ nav {
         width: 75vw;
     }
 }
+
+//Begin icons
+.icon {
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 20px;
+
+}
+.trashbin {
+    @extend .icon;
+}
+.trashbin:before {
+    content: "\f1f8";
+}
+
+//End icons

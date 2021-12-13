@@ -126,6 +126,13 @@ namespace CSS_Server.Controllers
             return View(form);
         }
 
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            _cameraJsonProvider.DeleteCamera(id, new BaseUser(HttpContext));
+            return Ok();
+        }
+
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)

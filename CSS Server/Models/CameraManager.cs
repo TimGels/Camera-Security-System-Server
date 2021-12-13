@@ -47,7 +47,7 @@ namespace CSS_Server.Models
                 return null;
 
             //Get the camera with its id
-            Camera camera = FindCamera(message.CameraID);
+            Camera camera = GetCamera(message.CameraID);
 
             //if the camera was found and it could be validated.
             if (camera != null && camera.Validate(message.Password))
@@ -56,7 +56,7 @@ namespace CSS_Server.Models
             return null;
         }
 
-        private Camera FindCamera(int id)
+        public Camera GetCamera(int id)
         {
            return this._cameras.FirstOrDefault(camera => camera.Id == id, null); 
         }
