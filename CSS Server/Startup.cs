@@ -85,7 +85,7 @@ namespace CSS_Server
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
                 //endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",

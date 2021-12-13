@@ -30,7 +30,6 @@ namespace CSS_Server.Controllers
             _cameraManager = provider.GetRequiredService<CameraManager>();
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
@@ -47,7 +46,6 @@ namespace CSS_Server.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Footage(int id)
         {
@@ -112,7 +110,6 @@ namespace CSS_Server.Controllers
 
         [HttpGet]
         [HttpPost]
-        [Authorize]
         public IActionResult Register(RegisterCameraViewModel form)
         {
             if(Request.Method == "GET")
@@ -123,14 +120,15 @@ namespace CSS_Server.Controllers
             form.Errors = errors;
             return View(form);
         }
-
+    
         [HttpDelete]
         public IActionResult Delete(int id)
         {
             _cameraJsonProvider.DeleteCamera(id, new BaseUser(HttpContext));
             return Ok();
         }
-
+        
+        [AllowAnonymous]
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
