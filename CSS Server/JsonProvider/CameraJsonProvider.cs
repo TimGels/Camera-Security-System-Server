@@ -6,8 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CSS_Server.JsonProvider
 {
@@ -20,30 +18,6 @@ namespace CSS_Server.JsonProvider
         {
             _logger = logger;
             _cameraManager = provider.GetRequiredService<CameraManager>();
-        }
-
-        public JObject GetJCamera(Camera camera)
-        {
-            _logger.LogTrace("Converting camera {0} to JSON", camera.Id);
-
-            JObject jCamera = new JObject();
-            jCamera["id"] = camera.Id;
-            jCamera["name"] = camera.Name;
-            jCamera["connected"] = camera.IsConnected();
-
-            return jCamera;
-        }
-
-        public JArray GetCameras(List<Camera> cameras)
-        {
-            JArray jCameras = new JArray();
-
-            foreach (Camera camera in cameras)
-            {
-                jCameras.Add(GetJCamera(camera));
-            }
-
-            return jCameras;
         }
 
         internal bool DeleteCamera(int id, BaseUser currentUser)
@@ -67,7 +41,6 @@ namespace CSS_Server.JsonProvider
             }
             return true;
         }
-
 
         /// <summary>
         /// This method will handle the registering process for a camera.
