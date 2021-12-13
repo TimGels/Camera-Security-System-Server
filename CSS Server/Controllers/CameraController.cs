@@ -123,6 +123,7 @@ namespace CSS_Server.Controllers
             return View(form);
         }
 
+        [AllowAnonymous]
         public async Task CreateConnection()
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
