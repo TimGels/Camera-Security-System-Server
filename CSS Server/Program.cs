@@ -1,3 +1,4 @@
+using CSS_Server.Models.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,12 @@ namespace CSS_Server
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            IHost host = CreateHostBuilder(args).Build();
+
+            //Initialize the database.
+            DatabaseHandler.Instance.Initialize();
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

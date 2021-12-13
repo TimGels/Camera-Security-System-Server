@@ -9,32 +9,13 @@ namespace CSS_Server.Models.Database
 {
     public class DatabaseHandler
     {
-        /// <summary>
-        /// Constructor used to create the singleton instance of the databaseHandler.
-        /// The database file path is set to the same folder as the executable + "database.db"
-        /// Based on this path and the key that is got from the GetKey method, a connection string is made.
-        /// 
-        /// This constructor will also create tables if they do not already exist.
-        /// </summary>
-        private DatabaseHandler()
-        {
-            // The database file is always stored in the same folder as the executable.
-            string databaseFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "database.db");
-            _connectionString = new SQLiteConnectionString(databaseFilePath, true, key: GetKey());
-
-            //Create all tables if they don't exist
-            using SQLiteConnection connection = CreateConnection();
-            connection.CreateTable<DBCamera>();
-            connection.CreateTable<DBUser>();
-
-        }
 
         #region Properties
         //Initiation of the singleton DatabaseHandler instance.
         private static readonly DatabaseHandler _instance = new DatabaseHandler();
 
         //The connectionString which will be used for all connections.
-        private readonly SQLiteConnectionString _connectionString;
+        private SQLiteConnectionString _connectionString;
 
         /// <summary>
         /// Getter for the singleton instance of the databaseHandler.
@@ -46,24 +27,6 @@ namespace CSS_Server.Models.Database
         #endregion
 
         /// <summary>
-        /// This method will be used to get the key that is used to encrypt the databasefile.
-        /// </summary>
-        /// <returns></returns>
-        private static string GetKey()
-        {
-            string key = Startup.Configuration["DATABASE_KEY"];
-
-            //Check if key is not set. If so, stop further execution of the app.
-            if(key == null)
-            {
-                Debug.WriteLine("No DATABASE_KEY set, set it with the environment vars or with secrets.json");
-                Environment.Exit(1);
-            }
-
-            return key;
-        }
-
-        /// <summary>
         /// This method is used to get a connection to the database based on the connectionstring and a key.
         /// </summary>
         /// <returns>A connection to the database based on a correct </returns>
@@ -72,5 +35,66 @@ namespace CSS_Server.Models.Database
             // The SQLiteConnection constructor will create a new "database.db" if the file does not exists.
             return new SQLiteConnection(_connectionString);
         }
+
+        #region Initialization
+        /// <summary>
+        /// Function to initialize the database.
+        /// This function will stop the application if the key is not set/correct.
+        /// The application will also be stopped when the given key is not the right key to decrypt the database.
+        /// </summary>
+        public void Initialize()
+        {
+            // The database file path is set to the same folder as the executable + "database.db"
+            string databaseFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "database.db");
+
+            //read the key from the configuration. This configuration is set in Program.cs and is initialized after the IHostBuilder build the app.
+            string key = Startup.Configuration["DATABASE_KEY"];
+
+            //Check if key is not set. If so, stop further execution of the app.
+            if (key == null)
+            {
+                StopApplication("No DATABASE_KEY set, set it with the environment vars or with secrets.json");
+            }
+
+            // Based on the database file path and the key a connection string is made that will be used for all database transactions.
+            _connectionString = new SQLiteConnectionString(databaseFilePath, true, key: key);
+
+            //This will be the first call to the database. If the given key is not correct, the application will be stopped.
+            try
+            {
+                CreateDatabase();
+            } 
+            catch (SQLiteException ex) when (ex.Result == SQLite3.Result.NonDBFile)
+            {
+                StopApplication("Given file is not a database. This is probably due a wrong encryption key.");
+            }
+        }
+
+
+        /// <summary>
+        /// This function will create all tables if they do not exist.
+        /// If there is no database file at all, a new database file will be created.
+        /// </summary>
+        private void CreateDatabase()
+        {
+            using SQLiteConnection connection = CreateConnection();
+            connection.CreateTable<DBCamera>();
+            connection.CreateTable<DBUser>();
+        }
+
+        /// <summary>
+        /// This function is used to stop the application if conditions are not met.
+        /// </summary>
+        /// <param name="message">Will be logged in the (debug) console to inform the user.</param>
+        private static void StopApplication(string message)
+        {
+            if(message != null && message != string.Empty)
+            {
+                Debug.WriteLine(message);
+                Console.WriteLine(message);
+            }
+            Environment.Exit(1);
+        }
+        #endregion
     }
 }
