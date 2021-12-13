@@ -1,4 +1,5 @@
 using CSS_Server.Models.Database;
+using CSS_Server.Models.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ namespace CSS_Server
                     logging.ClearProviders();
                     logging.AddConsole();
                     logging.AddDebug();
+                    logging.AddDatabase();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
