@@ -80,6 +80,7 @@ namespace CSS_Server.Models.Database
             using SQLiteConnection connection = CreateConnection();
             connection.CreateTable<DBCamera>();
             connection.CreateTable<DBUser>();
+            connection.CreateTable<DBLog>();
         }
 
         /// <summary>
