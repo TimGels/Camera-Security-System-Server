@@ -22,14 +22,12 @@ namespace CSS_Server.Controllers
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
         private readonly CameraManager _cameraManager;
-        private readonly BaseUser _currentUser;
 
         public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
         {
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
             _cameraManager = provider.GetRequiredService<CameraManager>();
-            _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
         [Authorize]
@@ -121,7 +119,7 @@ namespace CSS_Server.Controllers
                 return View(form);
 
             //TODO add proper validation
-            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, _currentUser, out JObject errors);
+            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(HttpContext), out JObject errors);
             form.Errors = errors;
             return View(form);
         }
