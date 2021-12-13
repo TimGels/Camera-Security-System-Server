@@ -43,14 +43,6 @@ namespace CSS_Server
                     options.LogoutPath = "/Account/Logout";
                 });
 
-            //services.AddMvc();
-
-            // authentication 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            });
-
             services.AddTransient<AuthenticationManager>();
 
             services.AddHttpContextAccessor();
