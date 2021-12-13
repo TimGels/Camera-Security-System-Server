@@ -53,13 +53,6 @@ namespace CSS_Server
 
             services.AddTransient<AuthenticationManager>();
 
-            services.AddHttpContextAccessor();
-            services.AddTransient(provider =>
-            {
-                HttpContext httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
-                return new BaseUser(httpContext);
-            });
-
             //services.AddRazorPages();
             //services.AddControllers();
         }
