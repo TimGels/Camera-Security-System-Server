@@ -1,10 +1,13 @@
 ﻿using CSS_Server.Models;
 using CSS_Server.Models.Authentication;
+using CSS_Server.Models.Database.DBObjects;
+using CSS_Server.Models.Database.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CSS_Server.JsonProvider
 {
@@ -12,6 +15,7 @@ namespace CSS_Server.JsonProvider
     {
         private readonly ILogger<CameraJsonProvider> _logger;
         private readonly CameraManager _cameraManager;
+        private readonly SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
         public CameraJsonProvider(ILogger<CameraJsonProvider> logger, IServiceProvider provider)
         {
             _logger = logger;
@@ -40,6 +44,28 @@ namespace CSS_Server.JsonProvider
             }
 
             return jCameras;
+        }
+
+        internal bool DeleteCamera(int id, BaseUser currentUser)
+        {
+            Camera camera = _cameraManager.GetCamera(id);
+            if (camera != null)
+            {
+                _repository.Delete(id);
+
+                //If there is an excisting connection we will close it. 
+                if(camera.CameraConnection != null)
+                {
+                    camera.CameraConnection.Close().RunSynchronously();
+                }
+
+                //Remove the camera from the camera manager
+                _cameraManager.Cameras.Remove(camera);
+
+                //log the deletion
+                _logger.LogInformation("Camera with id:{0} deleted by user {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
+            }
+            return true;
         }
 
 
