@@ -44,15 +44,22 @@ namespace CSS_Server.Models
 
             // Check if the message is valid.
             if (message == null || message.Type != MessageType.LOGIN || message.Password == null || message.CameraID < 1)
+            {
+                _logger.LogDebug("Camera sent invalid message!");
                 return null;
+            }
 
             //Get the camera with its id
             Camera camera = FindCamera(message.CameraID);
 
             //if the camera was found and it could be validated.
             if (camera != null && camera.Validate(message.Password))
+            {
+                _logger.LogInformation("Camera succesfully authenticated!");
                 return camera;
+            }
 
+            _logger.LogInformation("Camera was not found or could not be authenticated!");
             return null;
         }
 
