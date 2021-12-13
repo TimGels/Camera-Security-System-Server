@@ -23,6 +23,7 @@ namespace CSS_Server.Controllers
             _authenticationManager = provider.GetRequiredService<AuthenticationManager>();
         }
 
+        #region Login and Logout
         [HttpGet]
         [HttpPost]
         [AllowAnonymous]
@@ -56,6 +57,27 @@ namespace CSS_Server.Controllers
             await _authenticationManager.SignOut(this.HttpContext);
             return RedirectToAction("LogIn", "Account");
         }
+        #endregion
 
+        #region Endpoints for CRUD operations on users.
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            return Ok();
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Register()
+        {
+            return View();
+        }
+        #endregion
     }
 }

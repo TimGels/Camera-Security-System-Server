@@ -1,18 +1,17 @@
-﻿@using CSS_Server.ViewModels
-@using CSS_Server.Models
+﻿@using CSS_Server.Models
 
 @{
     Layout = "_Layout";
 }
 
-@model CameraIndexViewModel
+@model List<Camera>
 
 <main class="main_dashboard">
     <button class="addButton" title="Register a new camera" onclick="location.href='@Url.Action("Register", "Camera")'">+</button>
     <h1>Camera's</h1>
     <div class="cameras-container">
 
-    @foreach (Camera camera in Model.Cameras)
+    @foreach (Camera camera in Model)
     {
         <div class="single-camera-block" cameraId="@(camera.Id)" online="@(camera.IsConnected().ToString())">
             <img src="media/camerafootage.jpg" alt="footage">

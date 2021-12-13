@@ -33,15 +33,10 @@ namespace CSS_Server.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            CameraIndexViewModel model = new CameraIndexViewModel()
-            {
-                Cameras = _cameraManager.Cameras,
-            };
-
-            ViewData["Title"] = "View all " + model.Cameras.Count + " camera's";
+            ViewData["Title"] = "View all " + _cameraManager.Cameras.Count + " camera's";
             ViewData["Page"] = "camera-overview";
 
-            return View(model);
+            return View(_cameraManager.Cameras);
         }
 
         [HttpGet]

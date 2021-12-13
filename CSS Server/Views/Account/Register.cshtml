@@ -1,0 +1,39 @@
+﻿@using CSS_Server.ViewModels
+@using CSS_Server.Models
+
+@{
+    Layout = "_Layout";
+}
+
+
+@model RegisterUserViewModel
+
+<main class="main_form">
+    @if (!Model.SuccesfullAdded)
+    {
+    <form action="#" method="post">
+        <h1>
+            Register a new User
+        </h1>
+        <label for="UserName">UserName</label>
+        <input asp-for="UserName" name="UserName" type="text">
+
+        <label for="Email">Email</label>
+        <input asp-for="Email" name="Email" type="text">
+
+        <label for="password">Password</label>
+        <input asp-for="Password" name="password" type="password">
+
+        <label for="RetypePassword">Retype Password</label>
+        <input asp-for="RetypePassword" name="RetypePassword" type="password">
+
+        <input type="submit" value="Register User">
+    </form>
+    }
+
+    else
+    {
+        <h2>User was succesfully added!</h2>
+        <button onclick="location.href='@Url.Action("Index", "Account")'">Go to Account overview</button>
+    }
+</main>
