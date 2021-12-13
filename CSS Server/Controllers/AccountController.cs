@@ -3,6 +3,7 @@ using CSS_Server.Models.Authentication;
 using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
 using CSS_Server.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ namespace CSS_Server.Controllers
 
         [HttpGet]
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
             if (!ModelState.IsValid || Request.Method == "GET")

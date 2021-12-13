@@ -32,7 +32,6 @@ namespace CSS_Server.Controllers
             _currentUser = provider.GetRequiredService<BaseUser>();
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult Index()
         {
@@ -49,7 +48,6 @@ namespace CSS_Server.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Footage(int id)
         {
@@ -114,7 +112,6 @@ namespace CSS_Server.Controllers
 
         [HttpGet]
         [HttpPost]
-        [Authorize]
         public IActionResult Register(RegisterCameraViewModel form)
         {
             if(Request.Method == "GET")
