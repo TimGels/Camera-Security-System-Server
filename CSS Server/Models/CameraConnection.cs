@@ -49,7 +49,7 @@ namespace CSS_Server.Models
             switch (message.Type)
             {
                 case MessageType.LOGIN:
-                    _logger.LogInformation("WTF, already accepted camera sent login message again??");
+                    _logger.LogInformation("WTF, already accepted camera sent login message again?? JSON Message: {0}", Message.ToJson(message));
                     break;
 
                 case MessageType.FOOTAGE_RESPONSE_ALL:
