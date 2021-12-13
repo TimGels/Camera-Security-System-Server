@@ -22,6 +22,16 @@ namespace CSS_Server.Models
             this._webSocket = webSocket;
         }
 
+        public async Task<bool> Close()
+        {
+            if (_webSocket != null)
+            {
+                await _webSocket.CloseAsync(WebSocketCloseStatus.Empty, "The connection was closed by the server.", CancellationToken.None);
+                return true;
+            }
+            return false;
+        }
+
         public async Task StartReading()
         {
             

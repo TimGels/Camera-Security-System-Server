@@ -43,22 +43,7 @@ namespace CSS_Server
                     options.LogoutPath = "/Account/Logout";
                 });
 
-            //services.AddMvc();
-
-            // authentication 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            });
-
             services.AddTransient<AuthenticationManager>();
-
-            services.AddHttpContextAccessor();
-            services.AddTransient(provider =>
-            {
-                HttpContext httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
-                return new BaseUser(httpContext);
-            });
 
             //services.AddRazorPages();
             //services.AddControllers();
@@ -76,6 +61,15 @@ namespace CSS_Server
             //    // Default HSTS is 30 days. Change for production: https://aka.ms/aspnetcore-hsts.
             //    app.UseHsts();
             //}
+
+
+            //Add to each response the Cache-Control no cache header to precent back button
+            //feature on the client side after logging out succesfully.
+            app.Use((context, next) =>
+            {
+                context.Response.Headers["Cache-Control"] = "no-store,no-cache";
+                return next.Invoke();
+            });
 
             //app.UseHttpsRedirection();
             app.UseDefaultFiles();
