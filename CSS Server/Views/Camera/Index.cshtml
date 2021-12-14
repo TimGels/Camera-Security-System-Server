@@ -26,26 +26,37 @@
         </div>
     }
     </div>
+
+    <div id="snackbar"></div>
 </main>
 
 <script>
 
-    //This function is executed when the camera was succesfully deleted from the server.
-    function deletedSuccesfully(){
-        alert("Camera was deleted succesfully");
-        location.href = "@(Url.Action("Index", "Camera"))";
+    function showSnackbar(time){
+        var snackbar = document.getElementById("snackbar");
+        snackbar.className = "show";
+        setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, time);
     }
 
     //This function will be executed when the trashbin icon is clicked.
-    function trashbinOnClick(event, cameraId){
+    function trashbinOnClick(event, cameraBlock, cameraId){
 
         if(confirm("Are you sure you want to delete the camera?")){
             var url = "@(Url.Action("Delete", "Camera"))" + "/" + cameraId;
             var xhr = new XMLHttpRequest();
             xhr.open("DELETE", url);
 
-            //define a function for letting the user know that the camera is deleted succesfully.
-            xhr.onload = deletedSuccesfully;
+            //define a function for letting the user know that the camera is deleted succesfully (or not).
+            xhr.onload = function(){
+                var snackbar = document.getElementById("snackbar");
+                if(xhr.status == 200){
+                    snackbar.innerText = "Camera was deleted succesfully!"
+                    cameraBlock.remove();
+                } else {
+                    snackbar.innerText = "Camera was not deleted succesfully!"
+                }
+                showSnackbar(3000);
+            };
 
             xhr.send(null);
         }
@@ -64,7 +75,7 @@
         var trashbin = cameraBlock.querySelector(".trashbin");
 
         //add an onclick action to the trashbin icon
-        trashbin.addEventListener("click", trashbinOnClick.bind(null, event, cameraId));
+        trashbin.addEventListener("click", trashbinOnClick.bind(null, event, cameraBlock, cameraId));
 
         if(cameraBlock.getAttribute("online") == "True"){
             cameraBlock.addEventListener("click", function(event){

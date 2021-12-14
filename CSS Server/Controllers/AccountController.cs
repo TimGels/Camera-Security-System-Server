@@ -79,7 +79,7 @@ namespace CSS_Server.Controllers
 
             //Check if the user does not want to delete itself
             if(currentUser.Id == id)
-                return StatusCode(400);
+                return BadRequest();
 
             //Remove the user from the database.
             _repository.Delete(id);

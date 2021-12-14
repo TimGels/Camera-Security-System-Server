@@ -30,12 +30,6 @@
 </main>
 
 <script>
-    //This function is executed when the camera was succesfully deleted from the server.
-    function deleteComplete(message){
-        alert(message);
-        location.href = "@(Url.Action("Index", "Account"))";
-    }
-
     function pencilOnClick(event, userId){
         console.log("pencil is clicked", userId);
     }
@@ -44,7 +38,6 @@
         var snackbar = document.getElementById("snackbar");
         snackbar.className = "show";
         setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, time);
-
     }
 
     //This function will be executed when the trashbin icon is clicked.

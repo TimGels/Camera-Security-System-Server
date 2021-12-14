@@ -117,8 +117,9 @@ namespace CSS_Server.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            _cameraJsonProvider.DeleteCamera(id, new BaseUser(User));
-            return Ok();
+            if(_cameraJsonProvider.DeleteCamera(id, new BaseUser(User)))
+                return Ok();
+            return BadRequest();
         }
         
         [AllowAnonymous]
