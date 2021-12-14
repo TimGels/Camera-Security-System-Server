@@ -57,7 +57,6 @@ namespace CSS_Server.Models.Database
             }
 
             // Based on the database file path and the key a connection string is made that will be used for all database transactions.
-            _connectionString = new SQLiteConnectionString(databaseFilePath, true, key: key);
             _connectionString = new SQLiteConnectionString(databaseFilePath, SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex, true, key: key);
             //Debug.WriteLine(_connectionString.ToString());
 
