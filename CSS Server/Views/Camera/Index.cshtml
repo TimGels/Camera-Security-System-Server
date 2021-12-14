@@ -67,7 +67,7 @@
         //add an onclick action to the trashbin icon
         trashbin.addEventListener("click", trashbinOnClick.bind(null, event, cameraId));
 
-        if(cameraBlock.getAttribute("online") == "False"){
+        if(cameraBlock.getAttribute("online") == "True"){
             cameraBlock.addEventListener("click", function(event){
 
                 //prevent the onclick action when the trashbin button is clicked.
