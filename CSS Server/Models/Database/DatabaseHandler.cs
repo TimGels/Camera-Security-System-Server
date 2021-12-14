@@ -58,6 +58,8 @@ namespace CSS_Server.Models.Database
 
             // Based on the database file path and the key a connection string is made that will be used for all database transactions.
             _connectionString = new SQLiteConnectionString(databaseFilePath, true, key: key);
+            _connectionString = new SQLiteConnectionString(databaseFilePath, SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex, true, key: key);
+            //Debug.WriteLine(_connectionString.ToString());
 
             //This will be the first call to the database. If the given key is not correct, the application will be stopped.
             try
@@ -68,6 +70,13 @@ namespace CSS_Server.Models.Database
             {
                 StopApplication("Given file is not a database. This is probably due a wrong encryption key.");
             }
+
+            //set pragma read_committed
+            using SQLiteConnection connection = CreateConnection();
+            SQLiteCommand command = connection.CreateCommand("PRAGMA read_uncommitted = true;");
+            string output = command.ExecuteScalar<string>();
+
+
         }
 
 
