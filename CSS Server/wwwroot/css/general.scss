@@ -127,7 +127,11 @@ input[type=text], input[type=password], input[type=submit] {
     border-radius: 50%;
 }
 
-input[type=submit], .addButton {
+button {
+    font-size: 18px;
+}
+
+input[type=submit], .addButton, button {
     background-color: #4229d4;
     border: 1px solid #4229d4;
     color: white;
@@ -203,4 +207,11 @@ nav {
     content: "\f1f8";
 }
 
+.pencil {
+    @extend .icon;
+}
+
+.pencil:before {
+    content: "\f304";
+}
 //End icons

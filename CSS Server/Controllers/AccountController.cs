@@ -8,7 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using RealUser = CSS_Server.Models.Authentication.User;
 
 namespace CSS_Server.Controllers
 {
@@ -16,6 +19,7 @@ namespace CSS_Server.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly AuthenticationManager _authenticationManager;
+        private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
 
         public AccountController(ILogger<AccountController> logger, IServiceProvider provider)
         {
@@ -63,20 +67,48 @@ namespace CSS_Server.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            List<User> users = _repository.GetAll().Select(dbUser => new User(dbUser)).ToList();
+            return View(users);
         }
 
         [HttpDelete]
         public IActionResult Delete(int id)
         {
+            // Get the current user
+            BaseUser currentUser = new BaseUser(User);
+
+            //Check if the user does not want to delete itself
+            if(currentUser.Id == id)
+                return StatusCode(400);
+
+            //Remove the user from the database.
+            _repository.Delete(id);
+
+            //Log the deletion
+            _logger.LogInformation("User with id:{0} deleted by user {1} ({2})", id, currentUser.UserName, currentUser.Id);
+
             return Ok();
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult Register()
+        public IActionResult Register(RegisterUserViewModel form)
         {
-            return View();
+            if(Request.Method == "GET")
+                return View(form);
+
+            //TODO validation
+            RealUser newUser = RealUser.CreateUser(form.Email, form.UserName, form.Password);
+            if (newUser != null)
+            {
+                BaseUser currentUser = new BaseUser(User);
+                _logger.LogInformation("{0} ({1}) registered a new user {2} ({3}) with email {4}",
+                    currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
+                form.SuccesfullAdded = true;
+            }
+
+            form.Errors = null;
+            return View(form);
         }
         #endregion
     }
