@@ -109,7 +109,7 @@ namespace CSS_Server.Controllers
                 return View(form);
 
             //TODO add proper validation
-            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(HttpContext), out JObject errors);
+            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User), out JObject errors);
             form.Errors = errors;
             return View(form);
         }
@@ -117,7 +117,7 @@ namespace CSS_Server.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            _cameraJsonProvider.DeleteCamera(id, new BaseUser(HttpContext));
+            _cameraJsonProvider.DeleteCamera(id, new BaseUser(User));
             return Ok();
         }
         
