@@ -27,7 +27,7 @@ namespace CSS_Server.JsonProvider
             {
                 _repository.Delete(id);
 
-                //If there is an excisting connection we will close it. 
+                //If there is an existing connection we will close it. 
                 if(camera.CameraConnection != null)
                 {
                     camera.CameraConnection.Close().RunSynchronously();
