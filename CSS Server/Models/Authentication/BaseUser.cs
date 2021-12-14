@@ -1,6 +1,5 @@
 ﻿using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace CSS_Server.Models.Authentication
