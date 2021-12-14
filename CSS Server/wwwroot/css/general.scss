@@ -110,7 +110,6 @@ h1{
 }
 
 input[type=text], input[type=password], input[type=submit] {
-    margin-bottom: 24px;
     width: 100%;
 
     outline: none;
@@ -119,6 +118,17 @@ input[type=text], input[type=password], input[type=submit] {
     font-size: 18px;
     height: 56px;
 }
+
+.inputBox {
+    max-width: 250px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.validationError{
+    color: red;
+}
+
 
 .addButton {
     font-size: 18px;
