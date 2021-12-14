@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RealUser = CSS_Server.Models.Authentication.User;
+using ApplicationUser = CSS_Server.Models.Authentication.User;
 
 namespace CSS_Server.Controllers
 {
@@ -94,11 +94,15 @@ namespace CSS_Server.Controllers
         [HttpPost]
         public IActionResult Register(RegisterUserViewModel form)
         {
-            if(Request.Method == "GET")
-                return View(form);
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
 
-            //TODO validation
-            RealUser newUser = RealUser.CreateUser(form.Email, form.UserName, form.Password);
+            if (!ModelState.IsValid || Request.Method == "GET")
+            {
+                return View(form);
+            }
+
+            ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
             if (newUser != null)
             {
                 BaseUser currentUser = new BaseUser(User);
@@ -106,8 +110,6 @@ namespace CSS_Server.Controllers
                     currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
                 form.SuccesfullAdded = true;
             }
-
-            form.Errors = null;
             return View(form);
         }
         #endregion
