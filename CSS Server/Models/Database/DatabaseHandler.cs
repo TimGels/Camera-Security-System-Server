@@ -72,11 +72,17 @@ namespace CSS_Server.Models.Database
             }
 
             //set pragma read_committed
+            SetReadUnCommitted();
+        }
+
+        /// <summary>
+        /// This function will change the isolation level of the db.
+        /// </summary>
+        private void SetReadUnCommitted()
+        {
             using SQLiteConnection connection = CreateConnection();
             SQLiteCommand command = connection.CreateCommand("PRAGMA read_uncommitted = true;");
             string output = command.ExecuteScalar<string>();
-
-
         }
 
 
