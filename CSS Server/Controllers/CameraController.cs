@@ -142,7 +142,14 @@ namespace CSS_Server.Controllers
                 }
                 else
                 {
-                    await webSocket.CloseAsync(WebSocketCloseStatus.ProtocolError, "Validation Error", CancellationToken.None);
+                    try
+                    {
+                        await webSocket.CloseAsync(WebSocketCloseStatus.ProtocolError, "Validation Error", CancellationToken.None);
+                    }
+                    catch (WebSocketException ex)
+                    {
+                        _logger.LogDebug("Websocket errored while closing after invalid message: " + ex.Message);
+                    }
                 }
 
 

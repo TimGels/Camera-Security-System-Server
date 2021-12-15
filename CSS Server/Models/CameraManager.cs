@@ -45,7 +45,7 @@ namespace CSS_Server.Models
             // Check if the message is valid.
             if (message == null || message.Type != MessageType.LOGIN || message.Password == null || message.CameraID < 1)
             {
-                _logger.LogDebug("Camera sent invalid message!");
+                _logger.LogInformation("Camera sent invalid message!");
                 return null;
             }
 
