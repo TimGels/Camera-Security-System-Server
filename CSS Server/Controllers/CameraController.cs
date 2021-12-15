@@ -200,7 +200,7 @@ namespace CSS_Server.Controllers
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
-                //accept the incoming websocket connection:
+                // Accept the incoming websocket connection.
                 using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
                 Camera camera = await _cameraManager.ValidateCameraConnection(webSocket);
 
@@ -208,6 +208,7 @@ namespace CSS_Server.Controllers
                 {
                     camera.CameraConnection = new CameraConnection(webSocket, _logger);
                     await camera.CameraConnection.StartReading();
+                    await camera.CameraConnection.Close();
                 }
                 else
                 {
@@ -220,11 +221,6 @@ namespace CSS_Server.Controllers
                         _logger.LogDebug("Websocket errored while closing after invalid message: " + ex.Message);
                     }
                 }
-
-
-                // it is also possible to allow compression:
-                //using (WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync(
-                //    new WebSocketAcceptContext() { DangerousEnableCompression = true }))
             }
             else
             {
