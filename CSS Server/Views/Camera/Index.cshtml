@@ -20,6 +20,7 @@
                 <span>
                     <span class="@(camera.IsConnected() ? "online" : "offline")"></span>
                     <span class="trashbin"></span>
+                    <span class="pencil"></span>
                 </span>
                 
             </div>
@@ -59,6 +60,10 @@
         }
     }
 
+    function pecilOnClick(event, cameraId){
+        location.href = "@(Url.Action("Update", "Camera"))" + "/" + cameraId;
+    }
+
 
     //Get all camera blocks
     var cameraBlocks = document.querySelectorAll(".single-camera-block");
@@ -68,17 +73,19 @@
         //Get the id of the presented camera
         var cameraId = cameraBlock.getAttribute("cameraId");
 
-        //get the trashbin icon
+        //get the trashbin and pencil icons
         var trashbin = cameraBlock.querySelector(".trashbin");
+        var pencil = cameraBlock.querySelector(".pencil");
 
-        //add an onclick action to the trashbin icon
+        //add an onclick action to the trashbin and pencil icons
         trashbin.addEventListener("click", trashbinOnClick.bind(null, event, cameraBlock, cameraId));
+        pencil.addEventListener("click", pecilOnClick.bind(null, event, cameraId));
 
         if(cameraBlock.getAttribute("online") == "True"){
             cameraBlock.addEventListener("click", function(event){
 
                 //prevent the onclick action when the trashbin button is clicked.
-                if(event.target == trashbin){
+                if(event.target == trashbin || event.target == pencil){
                     return;
                 }
 

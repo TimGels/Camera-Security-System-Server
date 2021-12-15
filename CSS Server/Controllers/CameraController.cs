@@ -126,7 +126,56 @@ namespace CSS_Server.Controllers
                 return Ok();
             return BadRequest();
         }
-        
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Update(UpdateCameraViewModel form, int id)
+        {
+            //Get the camera with given id.
+            Camera camera = _cameraManager.Cameras.Find(x => x.Id == id);
+
+            //if no camera is found with given id, go to the camera overview.
+            if (camera == null)
+                return RedirectToAction("Index");
+
+            ViewData["cameraName"] = camera.Name;
+            ViewData["Title"] = "CSS: Update camera";
+
+            //Fill in the form with the current values of the camera.
+            if (Request.Method == "GET")
+            {
+                form.Name = camera.Name;
+                form.Description = camera.Description;
+                return View(form);
+            }
+
+            //From here handle the post:
+            ViewData["AlreadyPosted"] = true;
+
+            //Validate password if the user want to change the password.
+            if (form.ChangePassword)
+            {
+                //TODO extra password validation!
+                if (form.Password == null || form.Password == String.Empty)
+                    ModelState.AddModelError("Password", "You have to fill in a password");
+                if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
+                    ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
+            }
+
+            if (!ModelState.IsValid)
+                return View(form);
+
+            camera.Name = form.Name;
+            camera.Description = form.Description;
+
+            if(form.ChangePassword)
+                camera.Password = form.Password;
+
+            TempData["snackbar"] = "Camera updated succesfully";
+            return RedirectToAction("Index");
+        }
+
+
         [AllowAnonymous]
         public async Task CreateConnection()
         {
