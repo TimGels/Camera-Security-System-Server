@@ -49,7 +49,7 @@ namespace CSS_Server.Models
             switch (message.Type)
             {
                 case MessageType.LOGIN:
-                    _logger.LogInformation("WTF, already accepted camera sent login message again?? JSON Message: {0}", Message.ToJson(message));
+                    _logger.LogDebug("WTF, already accepted camera sent login message again?? JSON Message: {0}", Message.ToJson(message));
                     break;
 
                 case MessageType.FOOTAGE_RESPONSE_ALL:
@@ -66,7 +66,7 @@ namespace CSS_Server.Models
                     break;
 
                 default:
-                    _logger.LogInformation("WTF, unknow message type '?'", message.Type.ToString());
+                    _logger.LogDebug("WTF, unknow message type '?'", message.Type.ToString());
                     break;
             }
         }

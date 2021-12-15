@@ -55,7 +55,7 @@ namespace CSS_Server.Models
             //if the camera was found and it could be validated.
             if (camera != null && camera.Validate(message.Password))
             {
-                _logger.LogInformation("Camera succesfully authenticated!");
+                _logger.LogCritical("Camera with id={0} succesfully authenticated!", camera.Id);
                 return camera;
             }
 

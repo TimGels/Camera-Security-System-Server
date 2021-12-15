@@ -37,7 +37,7 @@ namespace CSS_Server.JsonProvider
                 _cameraManager.Cameras.Remove(camera);
 
                 //log the deletion
-                _logger.LogInformation("Camera with id:{0} deleted by user {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
+                _logger.LogCritical("Camera with id:{0} deleted by user {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
             }
             return true;
         }
@@ -58,11 +58,11 @@ namespace CSS_Server.JsonProvider
             Camera camera = new Camera(name, description, password);
 
             //Log the creation
-            _logger.LogInformation("New camera with id {0} created by {1} (UserId={2})", camera.Id, currentUser.UserName, currentUser.Id);
+            _logger.LogCritical("New camera with id {0} created by {1} (UserId={2})", camera.Id, currentUser.UserName, currentUser.Id);
 
             //add the new camera to the camera manager:
             _cameraManager.Cameras.Add(camera);
-            _logger.LogInformation("Camera with id:{0} added to the camera manager!", camera.Id);
+            _logger.LogCritical("Camera with id:{0} added to the camera manager!", camera.Id);
 
             errors = null;
             return true;
