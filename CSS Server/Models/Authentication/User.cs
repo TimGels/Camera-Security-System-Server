@@ -28,7 +28,7 @@ namespace CSS_Server.Models.Authentication
             get { return _dbUser.UserName; }
             set
             {
-                if (value = UserName)
+                if (value == UserName)
                     return;
                 _dbUser.UserName = value;
                 _repository.Update(_dbUser);
