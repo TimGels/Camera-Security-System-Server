@@ -31,8 +31,6 @@
 @model RegisterUserViewModel
 
 <main class="main_form">
-    @if (!Model.SuccesfullAdded)
-    {
         <form action="#" method="post">
             <h1>
             Register a new User
@@ -63,15 +61,6 @@
 
         <input type="submit" value="Register User">
     </form>
-    }
-
-    else
-    {
-        <div>
-            <h2>User was succesfully added!</h2>
-            <button onclick="location.href='@Url.Action("Index", "Account")'">Go to Account overview</button>
-        </div>
-    }
 </main>
 
 <script>

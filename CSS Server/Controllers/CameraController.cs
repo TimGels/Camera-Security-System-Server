@@ -34,8 +34,6 @@ namespace CSS_Server.Controllers
         public IActionResult Index()
         {
             ViewData["Title"] = "View all " + _cameraManager.Cameras.Count + " camera's";
-            ViewData["Page"] = "camera-overview";
-
             return View(_cameraManager.Cameras);
         }
 
@@ -112,7 +110,12 @@ namespace CSS_Server.Controllers
                 return View(form);
 
             //TODO add proper validation
-            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User));
+            if(_cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User)))
+            {
+                TempData["snackbar"] = "Camera was succesfully added!";
+                return RedirectToAction("Index");
+            }
+
             return View(form);
         }
     

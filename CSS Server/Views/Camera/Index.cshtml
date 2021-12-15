@@ -26,12 +26,9 @@
         </div>
     }
     </div>
-
-    <div id="snackbar"></div>
 </main>
 
 <script>
-
     function showSnackbar(time){
         var snackbar = document.getElementById("snackbar");
         snackbar.className = "show";
@@ -88,7 +85,5 @@
                 location.href = "@(Url.Action("Footage", "Camera"))" + "/" + cameraId;
             });
         }
-        
-        
     });
 </script>
