@@ -26,15 +26,21 @@ namespace CSS_Server.Models
         {
             if (_webSocket != null)
             {
-                await _webSocket.CloseAsync(WebSocketCloseStatus.Empty, "The connection was closed by the server.", CancellationToken.None);
-                return true;
+                try
+                {
+                    await _webSocket.CloseAsync(WebSocketCloseStatus.Empty, null, CancellationToken.None);
+                    return true;
+                }
+                catch (WebSocketException ex)
+                {
+                    _logger.LogDebug(ex.Message);
+                }
             }
             return false;
         }
 
         public async Task StartReading()
         {
-            
             while (_webSocket != null && _webSocket.State == WebSocketState.Open)
             {
                 Message message = await ReceiveMessageAsync(_webSocket);
@@ -42,6 +48,8 @@ namespace CSS_Server.Models
                 if (message != null)
                     HandleReceivedMessage(message);
             }
+
+            _logger.LogInformation("Stopping reading websocket with state: " + _webSocket.State);
         }
 
         private void HandleReceivedMessage(Message message)
