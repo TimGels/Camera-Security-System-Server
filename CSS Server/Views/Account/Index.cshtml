@@ -31,7 +31,7 @@
 
 <script>
     function pencilOnClick(event, userId){
-        console.log("pencil is clicked", userId);
+        location.href = "@(Url.Action("Update", "Account"))" + "/" + userId;
     }
 
     function showSnackbar(time){

@@ -119,6 +119,55 @@ namespace CSS_Server.Controllers
             }
             return View(form);
         }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Update(UpdateUserViewModel form, int id)
+        {
+            //Get the camera with given id.
+            DBUser dbUser = _repository.Get(id);
+
+            //if no camera is found with given id, go to the camera overview.
+            if (dbUser == null)
+                return RedirectToAction("Index");
+
+            User user = new User(dbUser);
+
+            ViewData["userName"] = user.UserName;
+            ViewData["email"] = user.Email;
+            ViewData["Title"] = "CSS: Update user";
+
+            //Fill in the form with the current values of the camera.
+            if (Request.Method == "GET")
+            {
+                form.UserName = user.UserName;
+                return View(form);
+            }
+
+            //From here handle the post:
+            ViewData["AlreadyPosted"] = true;
+
+            //Validate password if the user want to change the password.
+            if (form.ChangePassword)
+            {
+                //TODO extra password validation!
+                if (form.Password == null || form.Password == String.Empty)
+                    ModelState.AddModelError("Password", "You have to fill in a password");
+                if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
+                    ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
+            }
+
+            if (!ModelState.IsValid)
+                return View(form);
+
+            user.UserName = form.UserName;
+
+            if (form.ChangePassword)
+                user.Password = form.Password;
+
+            TempData["snackbar"] = "User updated succesfully";
+            return RedirectToAction("Index");
+        }
         #endregion
     }
 }
