@@ -44,6 +44,7 @@ namespace CSS_Server.Models.Logger
                 {
                     Level = (int)logLevel,
                     Message = formatter(state, exception),
+                    TimeStamp = DateTime.Now,
                 });
             });
 

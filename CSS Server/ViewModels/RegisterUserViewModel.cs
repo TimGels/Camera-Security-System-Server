@@ -1,14 +1,15 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CSS_Server.ViewModels
 {
-    public class RegisterCameraViewModel
+    public class RegisterUserViewModel
     {
-        [Required(ErrorMessage = "Fill in a name for the camera.")]
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Fill in a username.")]
+        public string UserName { get; set; }
 
-        public string Description { get; set; }
+        [Required]
+        [EmailAddress(ErrorMessage = "What a weird email you have. We're not going to do anything with this.")]
+        public string Email { get; set; }
 
         [Required(ErrorMessage = "A Password is required!")]
         [DataType(DataType.Password)]

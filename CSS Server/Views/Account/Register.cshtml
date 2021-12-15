@@ -28,27 +28,38 @@
     }
 }
 
-@model LogInViewModel
+@model RegisterUserViewModel
 
-<main class="main_form center">
-    <form action="#" method="post">
-        <h1>
-            CameraSecuritySystem
+<main class="main_form">
+        <form action="#" method="post">
+            <h1>
+            Register a new User
         </h1>
+        <div class="inputBox">
+            <label for="UserName">UserName</label>
+            <input asp-for="UserName" name="UserName" type="text" value="@Model.UserName">
+            @{ ErrorHelper("UserName"); }
+        </div>
 
         <div class="inputBox">
             <label for="Email">Email</label>
-            <input asp-for="Email" name="Email" type="text">
+            <input asp-for="Email" name="Email" type="text" value="@Model.Email">
             @{ ErrorHelper("Email"); }
         </div>
 
         <div class="inputBox">
             <label for="password">Password</label>
-            <input asp-for="Password" name="password" type="password">
+            <input asp-for="Password" name="password" type="password" value="@Model.Password">
             @{ ErrorHelper("Password"); }
         </div>
 
-        <input type="submit" value="Login">
+        <div class="inputBox">
+            <label for="RetypePassword">Retype Password</label>
+            <input asp-for="RetypePassword" name="RetypePassword" type="password" value="@Model.RetypePassword">
+            @{ ErrorHelper("RetypePassword"); }
+        </div>
+
+        <input type="submit" value="Register User">
     </form>
 </main>
 

@@ -21,10 +21,6 @@ namespace CSS_Server.Models.Authentication
         public int Id
         {
             get { return _dbUser.Id; }
-            set { 
-                _dbUser.Id = value;
-                _repository.Update(_dbUser);
-            }
         }
 
         public string UserName
@@ -32,6 +28,8 @@ namespace CSS_Server.Models.Authentication
             get { return _dbUser.UserName; }
             set
             {
+                if (value == UserName)
+                    return;
                 _dbUser.UserName = value;
                 _repository.Update(_dbUser);
             }
@@ -40,11 +38,6 @@ namespace CSS_Server.Models.Authentication
         public string Email
         {
             get { return _dbUser.Email; }
-            set
-            {
-                _dbUser.Email = value;
-                _repository.Update(_dbUser);
-            }
         }
 
         /// <summary>

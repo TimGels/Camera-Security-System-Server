@@ -8,7 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ApplicationUser = CSS_Server.Models.Authentication.User;
 
 namespace CSS_Server.Controllers
 {
@@ -16,6 +19,7 @@ namespace CSS_Server.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly AuthenticationManager _authenticationManager;
+        private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
 
         public AccountController(ILogger<AccountController> logger, IServiceProvider provider)
         {
@@ -23,25 +27,31 @@ namespace CSS_Server.Controllers
             _authenticationManager = provider.GetRequiredService<AuthenticationManager>();
         }
 
+        #region Login and Logout
         [HttpGet]
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
+            ViewData["Title"] = "CSS log-in";
+
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
+
             if (!ModelState.IsValid || Request.Method == "GET")
-            {
-                ViewData["Title"] = "CSS log-in";
-                ViewData["Page"] = "login";
                 return View(form);
-            }
+
             try
             {
                 User user = new SQLiteRepository<DBUser>().GetByEmail(form.Email);
 
                 if(user != null && user.Validate(form.Password))
-                    await _authenticationManager.SignIn(this.HttpContext, user);
-
-                return RedirectToAction("Index", "Camera", null);
+                {
+                    await _authenticationManager.SignIn(HttpContext, user);
+                    return RedirectToAction("Index", "Camera", null);
+                }
+                TempData["snackbar"] = "Email or password incorrect. Try again!";
+                return View(form);
             }
             catch (Exception ex)
             {
@@ -56,6 +66,117 @@ namespace CSS_Server.Controllers
             await _authenticationManager.SignOut(this.HttpContext);
             return RedirectToAction("LogIn", "Account");
         }
+        #endregion
 
+        #region Endpoints for CRUD operations on users.
+        [HttpGet]
+        public IActionResult Index()
+        {
+            ViewData["Title"] = "CSS: User overview";
+            List<User> users = _repository.GetAll().Select(dbUser => new User(dbUser)).ToList();
+            return View(users);
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            // Get the current user
+            BaseUser currentUser = new BaseUser(User);
+
+            //Check if the user does not want to delete itself
+            if(currentUser.Id == id)
+                return BadRequest();
+
+            //Remove the user from the database.
+            _repository.Delete(id);
+
+            //Log the deletion
+            _logger.LogInformation("User with id:{0} deleted by user {1} ({2})", id, currentUser.UserName, currentUser.Id);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Register(RegisterUserViewModel form)
+        {
+            ViewData["Title"] = "CSS: Register user";
+
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
+
+            if (!ModelState.IsValid || Request.Method == "GET")
+                return View(form);
+
+            ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
+            if (newUser != null)
+            {
+                BaseUser currentUser = new BaseUser(User);
+                _logger.LogInformation("{0} ({1}) registered a new user {2} ({3}) with email {4}",
+                    currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
+                TempData["snackbar"] = "User was succesfully added!";
+                return RedirectToAction("Index");
+            }
+            return View(form);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Update(UpdateUserViewModel form, int id)
+        {
+            //Get the camera with given id.
+            DBUser dbUser = _repository.Get(id);
+
+            //if no camera is found with given id, go to the camera overview.
+            if (dbUser == null)
+                return RedirectToAction("Index");
+
+            User user = new User(dbUser);
+
+            ViewData["userName"] = user.UserName;
+            ViewData["email"] = user.Email;
+            ViewData["Title"] = "CSS: Update user";
+
+            //Fill in the form with the current values of the camera.
+            if (Request.Method == "GET")
+            {
+                form.UserName = user.UserName;
+                return View(form);
+            }
+
+            //From here handle the post:
+            ViewData["AlreadyPosted"] = true;
+
+            //Validate password if the user want to change the password.
+            if (form.ChangePassword)
+            {
+                //TODO extra password validation!
+                if (form.Password == null || form.Password == String.Empty)
+                    ModelState.AddModelError("Password", "You have to fill in a password");
+                if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
+                    ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
+            }
+
+            if (!ModelState.IsValid)
+                return View(form);
+
+            BaseUser currentUser = new BaseUser(User);
+
+            if(user.UserName != form.UserName)
+            {
+                user.UserName = form.UserName;
+                _logger.LogInformation("User {0}, ({1}) has updated the username from user with id {2} to {3}", currentUser.UserName, currentUser.Id, user.Id, user.UserName);
+            }
+
+            if (form.ChangePassword)
+            {
+                user.Password = form.Password;
+                _logger.LogInformation("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
+            }
+
+            TempData["snackbar"] = "User updated succesfully";
+            return RedirectToAction("Index");
+        }
+        #endregion
     }
 }

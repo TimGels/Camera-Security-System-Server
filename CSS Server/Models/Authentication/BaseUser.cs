@@ -1,6 +1,5 @@
 ﻿using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace CSS_Server.Models.Authentication
@@ -8,12 +7,12 @@ namespace CSS_Server.Models.Authentication
     public class BaseUser
     {
         private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
-        private readonly HttpContext _httpContext;
+        private readonly ClaimsPrincipal _user;
         public string UserName
         {
             get
             {
-                return _httpContext.User.FindFirst(ClaimTypes.Name).Value;
+                return _user.FindFirst(ClaimTypes.Name).Value;
             }
         }
 
@@ -21,7 +20,7 @@ namespace CSS_Server.Models.Authentication
         {
             get
             {
-                if (!int.TryParse(_httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value, out int id))
+                if (!int.TryParse(_user.FindFirst(ClaimTypes.NameIdentifier).Value, out int id))
                     id = -1;
                 return id;
             }
@@ -31,13 +30,13 @@ namespace CSS_Server.Models.Authentication
         {
             get
             {
-                return _httpContext.User.FindFirst(ClaimTypes.Email).Value;
+                return _user.FindFirst(ClaimTypes.Email).Value;
             }
         }
 
-        public BaseUser(HttpContext httpContext)
+        public BaseUser(ClaimsPrincipal user)
         {
-            _httpContext = httpContext;
+            _user = user;
         }
 
         public User GetUserObject()

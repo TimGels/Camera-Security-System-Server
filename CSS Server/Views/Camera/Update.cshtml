@@ -28,12 +28,12 @@
     }
 }
 
-@model RegisterCameraViewModel
+@model UpdateCameraViewModel
 
 <main class="main_form">
     <form action="#" method="post">
         <h1>
-            Register a new Camera
+            Update @ViewData["cameraName"]
         </h1>
 
         <div class="inputBox">
@@ -49,23 +49,57 @@
         </div>
 
         <div class="inputBox">
+            <label for="ChangePassword">Wanna change password?</label>
+            <input asp-for="ChangePassword" name="ChangePassword" type="checkbox" value="false">
+        </div>
+
+        <div class="inputBox" data-name="password">
             <label for="password">Password</label>
             <input asp-for="Password" name="password" type="password" value="@Model.Password">
             @{ ErrorHelper("Password"); }
         </div>
 
-        <div class="inputBox">
+        <div class="inputBox" data-name="retypePassword">
             <label for="RetypePassword">Retype Password</label>
             <input asp-for="RetypePassword" name="RetypePassword" type="password" value="@Model.RetypePassword">
-            @{ ErrorHelper("RetypePassword"); }
+            @{
+                ErrorHelper("RetypePassword");
+            }
         </div>
 
-        <input type="submit" value="Register Camera">
+        <input type="submit" value="Update Camera">
     </form>
 </main>
 
 <script>
-//Get all inputboxes
+//Get the different passwordboxes
+var passwordBox = document.querySelector(".inputBox[data-name='password']");
+var retypePasswordBox = document.querySelector(".inputBox[data-name='retypePassword']");
+
+//get the changepassword checkbox
+var changePassword = document.querySelector("input[name='ChangePassword']");
+
+//Define a function for changing the display of the password boxes based on the checkbox
+function setPasswordDisplay(){
+    if(changePassword.checked){
+        passwordBox.style.display = 'block';
+        retypePasswordBox.style.display = 'block';
+        changePassword.value = "true";
+    } else {
+        passwordBox.style.display = 'none';
+        retypePasswordBox.style.display = 'none';
+        changePassword.value = "false";
+    }
+}
+
+//add an event listener on the changePassword checkbox so that fields can be hidden or showed.
+changePassword.addEventListener('change', setPasswordDisplay);
+
+//set initial display style of the password boxes based on the changedpassword prop in the model:
+changePassword.checked = @Json.Serialize(Model.ChangePassword);
+setPasswordDisplay();
+
+//Get all inputboxes so that errors can be displayed.
 Array.from(document.querySelectorAll(".inputBox")).forEach(function(inputBox){
     //Foreach input box add the keydown event listener.
     inputBox.querySelector("input").addEventListener("keydown", function(){

@@ -15,8 +15,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
+    min-height: 100vh;
+    width: 100vw;
+
     form
     {
         display: flex;
@@ -110,7 +111,6 @@ h1{
 }
 
 input[type=text], input[type=password], input[type=submit] {
-    margin-bottom: 24px;
     width: 100%;
 
     outline: none;
@@ -120,6 +120,17 @@ input[type=text], input[type=password], input[type=submit] {
     height: 56px;
 }
 
+.inputBox {
+    max-width: 250px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.validationError{
+    color: red;
+}
+
+
 .addButton {
     font-size: 18px;
     width: 40px;
@@ -127,7 +138,11 @@ input[type=text], input[type=password], input[type=submit] {
     border-radius: 50%;
 }
 
-input[type=submit], .addButton {
+button {
+    font-size: 18px;
+}
+
+input[type=submit], .addButton, button {
     background-color: #4229d4;
     border: 1px solid #4229d4;
     color: white;
@@ -194,6 +209,7 @@ nav {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     font-size: 20px;
+    cursor: pointer;
 
 }
 .trashbin {
@@ -203,4 +219,86 @@ nav {
     content: "\f1f8";
 }
 
+.pencil {
+    @extend .icon;
+}
+
+.pencil:before {
+    content: "\f304";
+}
 //End icons
+
+//Begin snackbar
+#snackbar {
+
+    visibility: hidden;
+    background-color: #333;
+    border-radius: 2px;
+
+    color: #fff;
+    text-align: center;
+    z-index: 1;
+    bottom: 30px;
+    font-size: 17px;
+    max-width: 300px;
+    padding: 16px;
+    position: fixed;
+    margin: 5% auto; /* Will not center vertically and won't work in IE6/7. */
+    left: 0;
+    right: 0;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+//End snackbar

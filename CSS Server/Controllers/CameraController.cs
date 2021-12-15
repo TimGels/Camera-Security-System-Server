@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json.Linq;
 using CSS_Server.Models.EventArgs;
 using CSS_Server.Models.Authentication;
 
@@ -33,15 +32,8 @@ namespace CSS_Server.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            CameraIndexViewModel model = new CameraIndexViewModel()
-            {
-                Cameras = _cameraManager.Cameras,
-            };
-
-            ViewData["Title"] = "View all " + model.Cameras.Count + " camera's";
-            ViewData["Page"] = "camera-overview";
-
-            return View(model);
+            ViewData["Title"] = "View all " + _cameraManager.Cameras.Count + " camera's";
+            return View(_cameraManager.Cameras);
         }
 
         [HttpGet]
@@ -110,22 +102,93 @@ namespace CSS_Server.Controllers
         [HttpPost]
         public IActionResult Register(RegisterCameraViewModel form)
         {
-            if(Request.Method == "GET")
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
+
+            if (!ModelState.IsValid || Request.Method == "GET")
                 return View(form);
 
             //TODO add proper validation
-            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(HttpContext), out JObject errors);
-            form.Errors = errors;
+            if(_cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User)))
+            {
+                TempData["snackbar"] = "Camera was succesfully added!";
+                return RedirectToAction("Index");
+            }
+
             return View(form);
         }
     
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            _cameraJsonProvider.DeleteCamera(id, new BaseUser(HttpContext));
-            return Ok();
+            if(_cameraJsonProvider.DeleteCamera(id, new BaseUser(User)))
+                return Ok();
+            return BadRequest();
         }
-        
+
+        [HttpGet]
+        [HttpPost]
+        public IActionResult Update(UpdateCameraViewModel form, int id)
+        {
+            //Get the camera with given id.
+            Camera camera = _cameraManager.Cameras.Find(x => x.Id == id);
+
+            //if no camera is found with given id, go to the camera overview.
+            if (camera == null)
+                return RedirectToAction("Index");
+
+            ViewData["cameraName"] = camera.Name;
+            ViewData["Title"] = "CSS: Update camera";
+
+            //Fill in the form with the current values of the camera.
+            if (Request.Method == "GET")
+            {
+                form.Name = camera.Name;
+                form.Description = camera.Description;
+                return View(form);
+            }
+
+            //From here handle the post:
+            ViewData["AlreadyPosted"] = true;
+
+            //Validate password if the user want to change the password.
+            if (form.ChangePassword)
+            {
+                //TODO extra password validation!
+                if (form.Password == null || form.Password == String.Empty)
+                    ModelState.AddModelError("Password", "You have to fill in a password");
+                if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
+                    ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
+            }
+
+            if (!ModelState.IsValid)
+                return View(form);
+
+            BaseUser currentUser = new BaseUser(User);
+
+            if(camera.Name != form.Name)
+            {
+                camera.Name = form.Name;
+                _logger.LogInformation("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Name);
+
+            }
+            if (camera.Description != form.Description)
+            {
+                camera.Description = form.Description;
+                _logger.LogInformation("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Description);
+            }
+
+            if (form.ChangePassword)
+            {
+                camera.Password = form.Password;
+                _logger.LogInformation("User {0}, ({1}) has updated the pasword from camera with id {2}}", currentUser.UserName, currentUser.Id, camera.Id);
+            }
+
+            TempData["snackbar"] = "Camera updated succesfully";
+            return RedirectToAction("Index");
+        }
+
+
         [AllowAnonymous]
         public async Task CreateConnection()
         {
