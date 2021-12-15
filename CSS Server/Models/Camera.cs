@@ -61,7 +61,9 @@ namespace CSS_Server.Models
         public string Name
         {
             get { return _dbCamera.Name; }
-            set { 
+            set {
+                if (value == Name)
+                    return;
                 _dbCamera.Name = value;
                 _repository.Update(_dbCamera);
             }
@@ -73,7 +75,9 @@ namespace CSS_Server.Models
         public string Description
         {
             get { return _dbCamera.Description; }
-            set { 
+            set {
+                if (value == Description)
+                    return;
                 _dbCamera.Description = value;
                 _repository.Update(_dbCamera);
             }
