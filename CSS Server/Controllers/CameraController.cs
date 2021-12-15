@@ -169,19 +169,19 @@ namespace CSS_Server.Controllers
             if(camera.Name != form.Name)
             {
                 camera.Name = form.Name;
-                _logger.LogInformation("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Name);
+                _logger.LogCritical("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Name);
 
             }
             if (camera.Description != form.Description)
             {
                 camera.Description = form.Description;
-                _logger.LogInformation("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Description);
+                _logger.LogCritical("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Description);
             }
 
             if (form.ChangePassword)
             {
                 camera.Password = form.Password;
-                _logger.LogInformation("User {0}, ({1}) has updated the pasword from camera with id {2}}", currentUser.UserName, currentUser.Id, camera.Id);
+                _logger.LogCritical("User {0}, ({1}) has updated the pasword from camera with id {2}}", currentUser.UserName, currentUser.Id, camera.Id);
             }
 
             TempData["snackbar"] = "Camera updated succesfully";
