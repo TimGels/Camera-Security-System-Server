@@ -105,12 +105,14 @@ namespace CSS_Server.Controllers
         [HttpPost]
         public IActionResult Register(RegisterCameraViewModel form)
         {
-            if(Request.Method == "GET")
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
+
+            if (!ModelState.IsValid || Request.Method == "GET")
                 return View(form);
 
             //TODO add proper validation
-            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User), out JObject errors);
-            form.Errors = errors;
+            form.SuccesfullAdded = _cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User));
             return View(form);
         }
     
