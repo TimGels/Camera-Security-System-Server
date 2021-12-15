@@ -160,10 +160,19 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid)
                 return View(form);
 
-            user.UserName = form.UserName;
+            BaseUser currentUser = new BaseUser(User);
+
+            if(user.UserName != form.UserName)
+            {
+                user.UserName = form.UserName;
+                _logger.LogInformation("User {0}, ({1}) has updated the username from user with id {2} to {3}", currentUser.UserName, currentUser.Id, user.Id, user.UserName);
+            }
 
             if (form.ChangePassword)
+            {
                 user.Password = form.Password;
+                _logger.LogInformation("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
+            }
 
             TempData["snackbar"] = "User updated succesfully";
             return RedirectToAction("Index");
