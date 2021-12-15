@@ -18,6 +18,5 @@ namespace CSS_Server.ViewModels
         [Required(ErrorMessage = "Retype your password!")]
         [Compare("Password", ErrorMessage = "Confirm your password!")]
         public string RetypePassword { get; set; }
-        public bool SuccesfullAdded { get; set; }
     }
 }

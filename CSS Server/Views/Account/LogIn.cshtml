@@ -1,8 +1,31 @@
 ﻿@using CSS_Server.ViewModels
 @using CSS_Server.Models
+@using Microsoft.AspNetCore.Mvc.ModelBinding
 
 @{
     Layout = "_Layout";
+
+    //This function is used to show validation errors for a given property.
+    void ErrorHelper(string propertyName)
+    {
+        //If the already posted property is not set, It's the first time the view will be showed to the user.
+        //In that case we do not want to show any error messages.
+        if (!ViewData.TryGetValue("AlreadyPosted", out object alreadyPosted) || !(bool)alreadyPosted)
+            return;
+
+        //If there is no modalState entry for the given prop, return.
+        @if (!ViewData.ModelState.TryGetValue(propertyName, out ModelStateEntry value))
+            return;
+
+        @if(value.Errors.Count > 0)
+        {
+            //Foreach error add a span to the dom.
+            @foreach (ModelError error in value.Errors)
+            {
+                <span class="validationError">@error.ErrorMessage</span>
+            }
+        }
+    }
 }
 
 @model LogInViewModel
@@ -12,12 +35,32 @@
         <h1>
             CameraSecuritySystem
         </h1>
-        <label for="Email">Email</label>
-        <input asp-for="Email" name="Email" type="text">
 
-        <label for="password">Password</label>
-        <input asp-for="Password" name="password" type="password">
+        <div class="inputBox">
+            <label for="Email">Email</label>
+            <input asp-for="Email" name="Email" type="text">
+            @{ ErrorHelper("Email"); }
+        </div>
+
+        <div class="inputBox">
+            <label for="password">Password</label>
+            <input asp-for="Password" name="password" type="password">
+            @{ ErrorHelper("Password"); }
+        </div>
 
         <input type="submit" value="Login">
     </form>
 </main>
+
+<script>
+//Get all inputboxes
+Array.from(document.querySelectorAll(".inputBox")).forEach(function(inputBox){
+    //Foreach input box add the keydown event listener.
+    inputBox.querySelector("input").addEventListener("keydown", function(){
+        //When the keydown event happens, the validationerrors in the inputBox will be removed.
+        Array.from(inputBox.querySelectorAll(".validationError")).forEach(function(error){
+            error.remove();
+        });
+    });
+});
+</script>

@@ -17,6 +17,7 @@
 
     </head>
     <body>
+
     @if (User.Identity.IsAuthenticated)
     {
         <nav>
@@ -29,6 +30,17 @@
         
         
             @RenderBody()
-        
+
+    <div id="snackbar"></div>
+    @if(TempData.TryGetValue("snackbar", out object snackbarText))
+    {
+        <script>
+            var snackbar = document.getElementById("snackbar");
+            snackbar.innerText = "@snackbarText.ToString()";
+            snackbar.className = "show";
+            setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+        </script>
+    }
+
     </body>
 </html>

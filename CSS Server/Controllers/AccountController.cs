@@ -33,20 +33,25 @@ namespace CSS_Server.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
+            ViewData["Title"] = "CSS log-in";
+
+            if (Request.Method == "POST")
+                ViewData["AlreadyPosted"] = true;
+
             if (!ModelState.IsValid || Request.Method == "GET")
-            {
-                ViewData["Title"] = "CSS log-in";
-                ViewData["Page"] = "login";
                 return View(form);
-            }
+
             try
             {
                 User user = new SQLiteRepository<DBUser>().GetByEmail(form.Email);
 
                 if(user != null && user.Validate(form.Password))
-                    await _authenticationManager.SignIn(this.HttpContext, user);
-
-                return RedirectToAction("Index", "Camera", null);
+                {
+                    await _authenticationManager.SignIn(HttpContext, user);
+                    return RedirectToAction("Index", "Camera", null);
+                }
+                TempData["snackbar"] = "Email or password incorrect. Try again!";
+                return View(form);
             }
             catch (Exception ex)
             {
@@ -67,6 +72,7 @@ namespace CSS_Server.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            ViewData["Title"] = "CSS: User overview";
             List<User> users = _repository.GetAll().Select(dbUser => new User(dbUser)).ToList();
             return View(users);
         }
@@ -94,6 +100,8 @@ namespace CSS_Server.Controllers
         [HttpPost]
         public IActionResult Register(RegisterUserViewModel form)
         {
+            ViewData["Title"] = "CSS: Register user";
+
             if (Request.Method == "POST")
                 ViewData["AlreadyPosted"] = true;
 
@@ -106,7 +114,8 @@ namespace CSS_Server.Controllers
                 BaseUser currentUser = new BaseUser(User);
                 _logger.LogInformation("{0} ({1}) registered a new user {2} ({3}) with email {4}",
                     currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
-                form.SuccesfullAdded = true;
+                TempData["snackbar"] = "User was succesfully added!";
+                return RedirectToAction("Index");
             }
             return View(form);
         }
