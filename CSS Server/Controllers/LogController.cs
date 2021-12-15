@@ -8,6 +8,8 @@ namespace CSS_Server.Controllers
     public class LogController : Controller
     {
         private static readonly SQLiteRepository<DBLog> _repository  = new SQLiteRepository<DBLog>();
+
+        [HttpGet]
         public IActionResult Index()
         {
             List<DBLog> logs = _repository.GetAll();
