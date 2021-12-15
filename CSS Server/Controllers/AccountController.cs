@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationUser = CSS_Server.Models.Authentication.User;
@@ -20,6 +21,7 @@ namespace CSS_Server.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly AuthenticationManager _authenticationManager;
         private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
+        private static bool _needSetupAccount = _repository.GetAll().Count() < 1;
 
         public AccountController(ILogger<AccountController> logger, IServiceProvider provider)
         {
@@ -33,6 +35,12 @@ namespace CSS_Server.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel form)
         {
+            if (new BaseUser(User).IsAuthenticated)
+                return RedirectToAction("Index", "Camera");
+
+            if (_needSetupAccount)
+                return RedirectToAction("Register");
+
             ViewData["Title"] = "CSS log-in";
 
             if (Request.Method == "POST")
@@ -48,7 +56,7 @@ namespace CSS_Server.Controllers
                 if(user != null && user.Validate(form.Password))
                 {
                     await _authenticationManager.SignIn(HttpContext, user);
-                    return RedirectToAction("Index", "Camera", null);
+                    return RedirectToAction("Index", "Camera");
                 }
                 TempData["snackbar"] = "Email or password incorrect. Try again!";
                 return View(form);
@@ -98,8 +106,15 @@ namespace CSS_Server.Controllers
 
         [HttpGet]
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult Register(RegisterUserViewModel form)
         {
+            BaseUser currentUser = new BaseUser(User);
+
+            //For an unauthorized user registering a new user is only possible when the needSetupAccount Bool == true
+            if (!currentUser.IsAuthenticated && !_needSetupAccount)
+                return RedirectToAction("LogIn");
+
             ViewData["Title"] = "CSS: Register user";
 
             if (Request.Method == "POST")
@@ -111,11 +126,16 @@ namespace CSS_Server.Controllers
             ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
             if (newUser != null)
             {
-                BaseUser currentUser = new BaseUser(User);
                 _logger.LogInformation("{0} ({1}) registered a new user {2} ({3}) with email {4}",
                     currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
+
                 TempData["snackbar"] = "User was succesfully added!";
-                return RedirectToAction("Index");
+
+                if (currentUser.IsAuthenticated)
+                 return RedirectToAction("Index");
+
+                _needSetupAccount = false;
+                return RedirectToAction("LogIn");
             }
             return View(form);
         }
@@ -178,5 +198,6 @@ namespace CSS_Server.Controllers
             return RedirectToAction("Index");
         }
         #endregion
+
     }
 }

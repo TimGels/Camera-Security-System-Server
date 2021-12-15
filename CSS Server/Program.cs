@@ -20,12 +20,6 @@ namespace CSS_Server
             //Initialize the database.
             DatabaseHandler.Instance.Initialize();
 
-            //When there are no accounts in the database, we will create a startup account.
-            if(new SQLiteRepository<DBUser>().GetAll().Count < 1)
-            {
-                User.CreateUser("admin@admin.com", "admin", "admin");
-            }
-
             host.Run();
         }
 
