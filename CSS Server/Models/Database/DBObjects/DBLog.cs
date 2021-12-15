@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System;
 
 namespace CSS_Server.Models.Database.DBObjects
 {
@@ -10,6 +11,9 @@ namespace CSS_Server.Models.Database.DBObjects
     {
         [Column("level")]
         public int Level { get; set; }
+
+        [Column("timestamp")]
+        public DateTime TimeStamp { get; set; }
 
         [Column("message")]
         public string Message { get; set; }
