@@ -98,9 +98,7 @@ namespace CSS_Server.Controllers
                 ViewData["AlreadyPosted"] = true;
 
             if (!ModelState.IsValid || Request.Method == "GET")
-            {
                 return View(form);
-            }
 
             ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
             if (newUser != null)

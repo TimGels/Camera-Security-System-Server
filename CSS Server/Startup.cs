@@ -32,8 +32,7 @@ namespace CSS_Server
             services.AddSingleton<CameraJsonProvider>();
             services.AddSingleton<CameraManager>();
             services.AddControllersWithViews()
-                .AddNewtonsoftJson()
-                .AddRazorRuntimeCompilation();
+                .AddNewtonsoftJson();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -45,7 +44,9 @@ namespace CSS_Server
 
             services.AddTransient<AuthenticationManager>();
 
-            //services.AddRazorPages();
+            services.AddRazorPages()
+                .AddRazorRuntimeCompilation();
+
             //services.AddControllers();
         }
 
