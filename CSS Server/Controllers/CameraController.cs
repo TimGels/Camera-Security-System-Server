@@ -164,11 +164,25 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid)
                 return View(form);
 
-            camera.Name = form.Name;
-            camera.Description = form.Description;
+            BaseUser currentUser = new BaseUser(User);
 
-            if(form.ChangePassword)
+            if(camera.Name != form.Name)
+            {
+                camera.Name = form.Name;
+                _logger.LogInformation("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Name);
+
+            }
+            if (camera.Description != form.Description)
+            {
+                camera.Description = form.Description;
+                _logger.LogInformation("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Description);
+            }
+
+            if (form.ChangePassword)
+            {
                 camera.Password = form.Password;
+                _logger.LogInformation("User {0}, ({1}) has updated the pasword from camera with id {2}}", currentUser.UserName, currentUser.Id, camera.Id);
+            }
 
             TempData["snackbar"] = "Camera updated succesfully";
             return RedirectToAction("Index");
