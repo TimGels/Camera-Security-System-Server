@@ -91,7 +91,7 @@ namespace CSS_Server.Controllers
             _repository.Delete(id);
 
             //Log the deletion
-            _logger.LogInformation("User with id:{0} deleted by user {1} ({2})", id, currentUser.UserName, currentUser.Id);
+            _logger.LogCritical("User with id:{0} deleted by user {1} ({2})", id, currentUser.UserName, currentUser.Id);
 
             return Ok();
         }
@@ -112,7 +112,7 @@ namespace CSS_Server.Controllers
             if (newUser != null)
             {
                 BaseUser currentUser = new BaseUser(User);
-                _logger.LogInformation("{0} ({1}) registered a new user {2} ({3}) with email {4}",
+                _logger.LogCritical("{0} ({1}) registered a new user {2} ({3}) with email {4}",
                     currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
                 TempData["snackbar"] = "User was succesfully added!";
                 return RedirectToAction("Index");
@@ -165,13 +165,13 @@ namespace CSS_Server.Controllers
             if(user.UserName != form.UserName)
             {
                 user.UserName = form.UserName;
-                _logger.LogInformation("User {0}, ({1}) has updated the username from user with id {2} to {3}", currentUser.UserName, currentUser.Id, user.Id, user.UserName);
+                _logger.LogCritical("User {0}, ({1}) has updated the username from user with id {2} to {3}", currentUser.UserName, currentUser.Id, user.Id, user.UserName);
             }
 
             if (form.ChangePassword)
             {
                 user.Password = form.Password;
-                _logger.LogInformation("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
+                _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
             }
 
             TempData["snackbar"] = "User updated succesfully";
