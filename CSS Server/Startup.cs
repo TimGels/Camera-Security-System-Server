@@ -46,7 +46,6 @@ namespace CSS_Server
             services.AddTransient<AuthenticationManager>();
 
             //services.AddRazorPages();
-
             //services.AddControllers();
         }
 
