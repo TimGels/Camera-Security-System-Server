@@ -1,32 +1,37 @@
-﻿using CSS_Server.Models;
-using CSS_Server.Models.Authentication;
-using CSS_Server.Models.Database.DBObjects;
-using CSS_Server.Models.Database.Repositories;
+﻿using CSS_Server.Models.Authentication;
+using CSS_Server.Models.Database;
 using CSS_Server.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using ApplicationUser = CSS_Server.Models.Authentication.User;
 
 namespace CSS_Server.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly AuthenticationManager _authenticationManager;
-        private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
-        private static bool _needSetupAccount = _repository.GetAll().Count() < 1;
+        private static bool? _needSetupAccount;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly CSSContext _context;
 
-        public AccountController(ILogger<AccountController> logger, IServiceProvider provider)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, 
+            ILogger<AccountController> logger, IServiceProvider provider, CSSContext context)
         {
             _logger = logger;
-            _authenticationManager = provider.GetRequiredService<AuthenticationManager>();
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _context = context;
+
+            if(_needSetupAccount == null)
+            {
+                _needSetupAccount = !_context.Users.Any();
+            }
         }
 
         #region Login and Logout
@@ -38,7 +43,7 @@ namespace CSS_Server.Controllers
             if (new BaseUser(User).IsAuthenticated)
                 return RedirectToAction("Index", "Camera");
 
-            if (_needSetupAccount)
+            if (_needSetupAccount == true)
                 return RedirectToAction("Register");
 
             ViewData["Title"] = "CSS log-in";
@@ -49,29 +54,27 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid || Request.Method == "GET")
                 return View(form);
 
-            try
+            var result = await _signInManager.PasswordSignInAsync(form.UserName, //TODO username must be email.
+                           form.Password, false, lockoutOnFailure: true);
+            if (result.Succeeded)
             {
-                User user = new SQLiteRepository<DBUser>().GetByEmail(form.UserName);
+                return RedirectToAction("Index", "Camera");
+            }
 
-                if(user != null && user.Validate(form.Password))
-                {
-                    await _authenticationManager.SignIn(HttpContext, user);
-                    return RedirectToAction("Index", "Camera");
-                }
-                TempData["snackbar"] = "Email or password incorrect. Try again!";
-                return View(form);
-            }
-            catch (Exception ex)
+            if (result.IsLockedOut)
             {
-                ModelState.AddModelError("summary", ex.Message);
+                TempData["snackbar"] = "You are locked out!";
                 return View(form);
             }
+
+            TempData["snackbar"] = "Email or password incorrect. Try again!";
+            return View(form);
         }
 
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await _authenticationManager.SignOut(this.HttpContext);
+            await _signInManager.SignOutAsync();
             return RedirectToAction("LogIn", "Account");
         }
         #endregion
@@ -81,22 +84,23 @@ namespace CSS_Server.Controllers
         public IActionResult Index()
         {
             ViewData["Title"] = "CSS: User overview";
-            List<User> users = _repository.GetAll().Select(dbUser => new User(dbUser)).ToList();
+            List<User> users = _context.Users.ToList();
             return View(users);
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             // Get the current user
             BaseUser currentUser = new BaseUser(User);
 
             //Check if the user does not want to delete itself
-            if(currentUser.Id == id)
+            if (currentUser.Id == id)
                 return BadRequest();
 
-            //Remove the user from the database.
-            _repository.Delete(id);
+            //Remove the user with the usermanager
+            var user = await _userManager.FindByIdAsync(id);
+            await _userManager.DeleteAsync(user);
 
             //Log the deletion
             _logger.LogCritical("User with id:{0} deleted by user {1} ({2})", id, currentUser.UserName, currentUser.Id);
@@ -107,12 +111,12 @@ namespace CSS_Server.Controllers
         [HttpGet]
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Register(RegisterUserViewModel form)
+        public async Task<IActionResult> Register(RegisterUserViewModel form)
         {
             BaseUser currentUser = new BaseUser(User);
 
             //For an unauthorized user registering a new user is only possible when the needSetupAccount Bool == true
-            if (!currentUser.IsAuthenticated && !_needSetupAccount)
+            if (!currentUser.IsAuthenticated && _needSetupAccount == false)
                 return RedirectToAction("LogIn");
 
             ViewData["Title"] = "CSS: Register user";
@@ -123,42 +127,43 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid || Request.Method == "GET")
                 return View(form);
 
-            ApplicationUser newUser = ApplicationUser.CreateUser(form.UserName, form.Password, out Dictionary<string, string> errors);
-            if (newUser != null)
+            var user = new User { UserName = form.UserName, Email = form.UserName };
+            var result = await _userManager.CreateAsync(user, form.Password);
+
+            if (result.Succeeded)
             {
-                _logger.LogCritical("{0} ({1}) registered a new user {2} ({3})",
-                    currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id);
+                _logger.LogCritical("{0} ({1}) registered a new user",
+                    currentUser.UserName, currentUser.Id);
 
                 TempData["snackbar"] = "User was succesfully added!";
 
                 if (currentUser.IsAuthenticated)
-                 return RedirectToAction("Index");
+                    return RedirectToAction("Index");
 
                 _needSetupAccount = false;
                 return RedirectToAction("LogIn");
             }
-            if(errors.Count > 0)
+            if(result.Errors.Count() > 0)
             {
-                foreach(KeyValuePair<string, string> error in errors)
+                foreach(var error in result.Errors)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    ModelState.AddModelError("Password", error.Description);
                 }
             }
+            TempData["snackbar"] = "Somethin went wrong while registering the user.";
             return View(form);
         }
 
         [HttpGet]
         [HttpPost]
-        public IActionResult Update(UpdateUserViewModel form, int id)
+        public async Task<IActionResult> Update(UpdateUserViewModel form, string id)
         {
-            //Get the camera with given id.
-            DBUser dbUser = _repository.Get(id);
+            //get user from usermanager
+            var user = await _userManager.FindByIdAsync(id);
 
-            //if no camera is found with given id, go to the camera overview.
-            if (dbUser == null)
+            //if no user is found with given id, go to the camera overview.
+            if (user == null)
                 return RedirectToAction("Index");
-
-            User user = new User(dbUser);
 
             ViewData["userName"] = user.UserName;
             ViewData["Title"] = "CSS: Update user";
@@ -181,15 +186,19 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid)
                 return View(form);
 
+            //create a reset token
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            //change the password
+            var result = await _userManager.ResetPasswordAsync(user, token, form.Password);
+
             BaseUser currentUser = new BaseUser(User);
 
-            user.Password = form.Password;
             _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
 
             TempData["snackbar"] = "Changed password succesfully";
             return RedirectToAction("Index");
         }
         #endregion
-
     }
 }

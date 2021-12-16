@@ -13,6 +13,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using CSS_Server.Models.EventArgs;
 using CSS_Server.Models.Authentication;
+using CSS_Server.Models.Database;
 
 namespace CSS_Server.Controllers
 {
@@ -21,12 +22,14 @@ namespace CSS_Server.Controllers
         private readonly ILogger<CameraController> _logger;
         private readonly CameraJsonProvider _cameraJsonProvider;
         private readonly CameraManager _cameraManager;
+        private readonly CSSContext _context;
 
-        public CameraController(ILogger<CameraController> logger, IServiceProvider provider)
+        public CameraController(ILogger<CameraController> logger, IServiceProvider provider, CSSContext context)
         {
             _logger = logger;
             _cameraJsonProvider = provider.GetRequiredService<CameraJsonProvider>();
             _cameraManager = provider.GetRequiredService<CameraManager>();
+            _context = context;
         }
 
         [HttpGet]
@@ -40,7 +43,7 @@ namespace CSS_Server.Controllers
         public async Task<IActionResult> Footage(int id)
         {
             //Check if camera is online.
-            Camera camera = _cameraManager.Cameras.Find(x => x.Id == id);
+            Camera camera = _cameraManager.Cameras.Find(x => x.ID == id);
             if (camera == null || !camera.IsConnected()) {
                 return View(new CameraFootageViewModel()
                 {
@@ -80,7 +83,7 @@ namespace CSS_Server.Controllers
 
             if (!signalled)
             {
-                _logger.LogWarning("FootageAllReceived event timeout! for camera (id={0})", camera.Id);
+                _logger.LogWarning("FootageAllReceived event timeout! for camera (id={0})", camera.ID);
                 // Timeout
                 return View(new CameraFootageViewModel()
                 {
@@ -93,7 +96,7 @@ namespace CSS_Server.Controllers
             return View(new CameraFootageViewModel()
             {
                 Footage = footage,
-                CameraId = camera.Id,
+                CameraId = camera.ID,
                 CameraName = camera.Name,
             });
         }
@@ -131,7 +134,7 @@ namespace CSS_Server.Controllers
         public IActionResult Update(UpdateCameraViewModel form, int id)
         {
             //Get the camera with given id.
-            Camera camera = _cameraManager.Cameras.Find(x => x.Id == id);
+            Camera camera = _cameraManager.Cameras.Find(x => x.ID == id);
 
             //if no camera is found with given id, go to the camera overview.
             if (camera == null)
@@ -169,20 +172,23 @@ namespace CSS_Server.Controllers
             if(camera.Name != form.Name)
             {
                 camera.Name = form.Name;
-                _logger.LogCritical("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Name);
+                _logger.LogCritical("User {0}, ({1}) has updated the name from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.ID, camera.Name);
 
             }
             if (camera.Description != form.Description)
             {
                 camera.Description = form.Description;
-                _logger.LogCritical("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.Id, camera.Description);
+                _logger.LogCritical("User {0}, ({1}) has updated the description from camera with id {2} to {3}", currentUser.UserName, currentUser.Id, camera.ID, camera.Description);
             }
 
             if (form.ChangePassword)
             {
-                camera.Password = form.Password;
-                _logger.LogCritical("User {0}, ({1}) has updated the pasword from camera with id {2}}", currentUser.UserName, currentUser.Id, camera.Id);
+                _cameraJsonProvider.ChangePassword(camera, form.Password);
+                _logger.LogCritical("User {0}, ({1}) has updated the pasword from camera with id {2}", currentUser.UserName, currentUser.Id, camera.ID);
             }
+
+            _context.Cameras.Update(camera);
+            _context.SaveChanges();
 
             TempData["snackbar"] = "Camera updated succesfully";
             return RedirectToAction("Index");

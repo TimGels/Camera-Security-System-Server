@@ -1,100 +1,35 @@
-﻿using CSS_Server.Models.Database.DBObjects;
-using CSS_Server.Models.Database.Repositories;
-using CSS_Server.Utilities;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CSS_Server.Utilities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CSS_Server.Models
 {
     public class Camera
     {
-        #region Constructors
-        /// <summary>
-        /// Constructor for creating a new Camera.
-        /// The new camera will be added to the database. Therefore the ID will be set after using this constructor.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="password"></param>
-        public Camera(string name, string description, string password)
-        {
-            DBCamera dBCamera = new DBCamera()
-            {
-                Name = name,
-                Description = description,
-                Password = HashHelper.GenerateHash(password, out string salt),
-                Salt = salt,
-        };
-
-            _dbCamera = dBCamera;
-            _repository.Insert(dBCamera);
-        }
-
-        /// <summary>
-        /// This constructor is only used for creating a Camera object based on an DBCamera object.
-        /// Thus only for already existing database records.
-        /// </summary>
-        /// <param name="dBCamera"></param>
-        private Camera(DBCamera dBCamera)
-        {
-            _dbCamera = dBCamera;
-        }
-        #endregion
-
         #region Properties
-        private readonly DBCamera _dbCamera;
-        private static SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
-
+        [NotMapped]
         public CameraConnection CameraConnection { get; set; }
 
         /// <summary>
         /// The id property is determined by the database. Therefore it can't be set.
         /// </summary>
-        public int Id
-        {
-            get { return _dbCamera.Id; }
-        }
+        public int ID { get; set; }
 
         /// <summary>
         /// The name of the camera. When the value is set, it will be updated in the database.
         /// </summary>
-        public string Name
-        {
-            get { return _dbCamera.Name; }
-            set {
-                if (value == Name)
-                    return;
-                _dbCamera.Name = value;
-                _repository.Update(_dbCamera);
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Description of the camera. When the value is set, it will be updated in the database.
         /// </summary>
-        public string Description
-        {
-            get { return _dbCamera.Description; }
-            set {
-                if (value == Description)
-                    return;
-                _dbCamera.Description = value;
-                _repository.Update(_dbCamera);
-            }
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// The passphrase of the camera. When the value is set, it will be updated in the database.
         /// </summary>
-        public string Password
-        {
-            set {
-                //create hash and salt for the given password.
-                _dbCamera.Password = HashHelper.GenerateHash(value, out string salt);
-                _dbCamera.Salt = salt;
-                _repository.Update(_dbCamera);
-            }
-        }
+        public string Password { get; set; }
+
+        public string Salt { get; set; }
         #endregion
 
         /// <summary>
@@ -114,29 +49,7 @@ namespace CSS_Server.Models
         /// <returns></returns>
         public bool Validate(string password)
         {
-            return HashHelper.Verify(password, _dbCamera.Password, _dbCamera.Salt);
+            return HashHelper.Verify(password, Password, Salt);
         }
-
-        #region static getters
-        /// <summary>
-        /// Getter for getting all cameras from the database.
-        /// </summary>
-        /// <returns>All cameras that are present in the database.</returns>
-        public static List<Camera> GetAll()
-        {
-            return _repository.GetAll().Select(dbCamera => new Camera(dbCamera)).ToList();
-        }
-
-        /// <summary>
-        /// Get a specific camera from the database.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static Camera Get(int id)
-        {
-            DBCamera dbCamera = _repository.Get(id);
-            return dbCamera == null ? null : new Camera(dbCamera);
-        }
-        #endregion
     }
 }

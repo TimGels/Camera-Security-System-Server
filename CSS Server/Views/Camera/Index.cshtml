@@ -13,10 +13,10 @@
 
     @foreach (Camera camera in Model)
     {
-        <div class="single-camera-block" cameraId="@(camera.Id)" online="@(camera.IsConnected().ToString())">
+        <div class="single-camera-block" cameraId="@(camera.ID)" online="@(camera.IsConnected().ToString())">
             <img src="media/camerafootage.jpg" alt="footage">
             <div class="camera-info">
-                <h2>Camera: @camera.Name (@camera.Id) </h2>
+                <h2>Camera: @camera.Name (@camera.ID) </h2>
                 <span>
                     <span class="@(camera.IsConnected() ? "online" : "offline")"></span>
                     <span class="trashbin"></span>

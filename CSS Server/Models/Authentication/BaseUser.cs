@@ -1,12 +1,9 @@
-﻿using CSS_Server.Models.Database.DBObjects;
-using CSS_Server.Models.Database.Repositories;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace CSS_Server.Models.Authentication
 {
     public class BaseUser
     {
-        private static readonly SQLiteRepository<DBUser> _repository = new SQLiteRepository<DBUser>();
         private readonly ClaimsPrincipal _user;
         public string UserName
         {
@@ -19,14 +16,14 @@ namespace CSS_Server.Models.Authentication
             }
         }
 
-        public int Id
+        public string Id
         {
             get
             {
                 Claim idClaim = _user.FindFirst(ClaimTypes.NameIdentifier);
-                if (idClaim == null || !int.TryParse(idClaim.Value, out int id))
-                    id = -1;
-                return id;
+                if (idClaim == null)
+                    return string.Empty;
+                return idClaim.Value;
             }
         }
 
@@ -49,14 +46,6 @@ namespace CSS_Server.Models.Authentication
         public BaseUser(ClaimsPrincipal user)
         {
             _user = user;
-        }
-
-        public User GetUserObject()
-        {
-            DBUser dBUser = _repository.Get(Id);
-            if (dBUser == null)
-                return null;
-            return new User(dBUser);
         }
     }
 }

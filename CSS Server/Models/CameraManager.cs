@@ -1,12 +1,10 @@
-using Newtonsoft.Json.Linq;
 using System.Net.WebSockets;
-using System.Text;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Threading;
 using System;
 using System.Linq;
+using CSS_Server.Models.Database;
 
 namespace CSS_Server.Models
 {
@@ -19,8 +17,9 @@ namespace CSS_Server.Models
         {
             _logger = logger;
 
+            using CSSContext context = CSSContext.GetContext();
             //read coupled cameras from database and add them to the list.
-            _cameras = Camera.GetAll();
+            _cameras = context.Cameras.ToList();
 
             _logger.LogInformation("Got {0} cameras from the database!", _cameras.Count);
         }
@@ -28,7 +27,6 @@ namespace CSS_Server.Models
         public List<Camera> Cameras
         {
             get { return _cameras; }
-            //set { myVar = value; }
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace CSS_Server.Models
             //if the camera was found and it could be validated.
             if (camera != null && camera.Validate(message.Password))
             {
-                _logger.LogCritical("Camera with id={0} succesfully authenticated!", camera.Id);
+                _logger.LogCritical("Camera with id={0} succesfully authenticated!", camera.ID);
                 return camera;
             }
 
@@ -65,7 +63,7 @@ namespace CSS_Server.Models
 
         public Camera GetCamera(int id)
         {
-           return this._cameras.FirstOrDefault(camera => camera.Id == id, null); 
+           return this._cameras.FirstOrDefault(camera => camera.ID == id, null); 
         }
     }
 }
