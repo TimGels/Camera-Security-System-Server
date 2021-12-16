@@ -42,12 +42,6 @@
         </div>
 
         <div class="inputBox">
-            <label for="Email">Email</label>
-            <input asp-for="Email" name="Email" type="text" value="@Model.Email">
-            @{ ErrorHelper("Email"); }
-        </div>
-
-        <div class="inputBox">
             <label for="password">Password</label>
             <input asp-for="Password" name="password" type="password" value="@Model.Password">
             @{ ErrorHelper("Password"); }

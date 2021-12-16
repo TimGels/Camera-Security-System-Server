@@ -1,7 +1,8 @@
 ﻿using CSS_Server.Models.Database.DBObjects;
 using CSS_Server.Models.Database.Repositories;
 using CSS_Server.Utilities;
-using System;
+using SQLite;
+using System.Collections.Generic;
 
 namespace CSS_Server.Models.Authentication
 {
@@ -26,18 +27,6 @@ namespace CSS_Server.Models.Authentication
         public string UserName
         {
             get { return _dbUser.UserName; }
-            set
-            {
-                if (value == UserName)
-                    return;
-                _dbUser.UserName = value;
-                _repository.Update(_dbUser);
-            }
-        }
-
-        public string Email
-        {
-            get { return _dbUser.Email; }
         }
 
         /// <summary>
@@ -68,7 +57,7 @@ namespace CSS_Server.Models.Authentication
             return HashHelper.Verify(password, _dbUser.Password, _dbUser.Salt);
         }
 
-        public static User CreateUser(string email, string userName, string password)
+        public static User CreateUser(string userName, string password, out Dictionary<string, string> errors)
         {
             //create hash and salt for the given password.
             string hash = HashHelper.GenerateHash(password, out string salt);
@@ -76,7 +65,6 @@ namespace CSS_Server.Models.Authentication
             //create a new DBUser object with all the props.
             DBUser dbUser = new DBUser()
             {
-                Email = email,
                 UserName = userName,
                 Password = hash,
                 Salt = salt,
@@ -85,12 +73,14 @@ namespace CSS_Server.Models.Authentication
             try
             {
                 _repository.Insert(dbUser);
+                errors = null;
                 return new User(dbUser);
             }
-            catch (Exception)
+            //catch exception that can happen because of a non unique userName.
+            catch (SQLiteException ex) when (ex.Result == SQLite3.Result.Constraint && ex.Message == "UNIQUE constraint failed: User.userName")
             {
-                //catch any exceptions that can happen because of a non unique emailadress.
-                //And do something of course with it..
+                errors = new Dictionary<string, string>();
+                errors.Add("UserName", "Username must be unique, there is already another user with this username");
                 return null;
             }
         }

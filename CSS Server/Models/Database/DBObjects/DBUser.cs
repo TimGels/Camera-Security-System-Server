@@ -6,9 +6,6 @@ namespace CSS_Server.Models.Database.DBObjects
     public class DBUser : AbstractTable
     {
         [Unique]
-        [Column("email")]
-        public string Email { get; set; }
-
         [Column("userName")]
         public string UserName { get; set; }
 

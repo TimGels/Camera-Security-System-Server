@@ -51,7 +51,7 @@ namespace CSS_Server.Controllers
 
             try
             {
-                User user = new SQLiteRepository<DBUser>().GetByEmail(form.Email);
+                User user = new SQLiteRepository<DBUser>().GetByEmail(form.UserName);
 
                 if(user != null && user.Validate(form.Password))
                 {
@@ -123,11 +123,11 @@ namespace CSS_Server.Controllers
             if (!ModelState.IsValid || Request.Method == "GET")
                 return View(form);
 
-            ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
+            ApplicationUser newUser = ApplicationUser.CreateUser(form.UserName, form.Password, out Dictionary<string, string> errors);
             if (newUser != null)
             {
-                _logger.LogCritical("{0} ({1}) registered a new user {2} ({3}) with email {4}",
-                    currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
+                _logger.LogCritical("{0} ({1}) registered a new user {2} ({3})",
+                    currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id);
 
                 TempData["snackbar"] = "User was succesfully added!";
 
@@ -136,6 +136,13 @@ namespace CSS_Server.Controllers
 
                 _needSetupAccount = false;
                 return RedirectToAction("LogIn");
+            }
+            if(errors.Count > 0)
+            {
+                foreach(KeyValuePair<string, string> error in errors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
             }
             return View(form);
         }
@@ -154,47 +161,32 @@ namespace CSS_Server.Controllers
             User user = new User(dbUser);
 
             ViewData["userName"] = user.UserName;
-            ViewData["email"] = user.Email;
             ViewData["Title"] = "CSS: Update user";
 
             //Fill in the form with the current values of the camera.
             if (Request.Method == "GET")
             {
-                form.UserName = user.UserName;
                 return View(form);
             }
 
             //From here handle the post:
             ViewData["AlreadyPosted"] = true;
-
-            //Validate password if the user want to change the password.
-            if (form.ChangePassword)
-            {
-                //TODO extra password validation!
-                if (form.Password == null || form.Password == String.Empty)
-                    ModelState.AddModelError("Password", "You have to fill in a password");
-                if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
-                    ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
-            }
+            
+            //TODO extra password validation!
+            if (form.Password == null || form.Password == String.Empty)
+                ModelState.AddModelError("Password", "You have to fill in a password");
+            if (form.RetypePassword == null || form.RetypePassword == String.Empty || form.RetypePassword != form.Password)
+                ModelState.AddModelError("RetypePassword", "You have to confirm your password correctly!");
 
             if (!ModelState.IsValid)
                 return View(form);
 
             BaseUser currentUser = new BaseUser(User);
 
-            if(user.UserName != form.UserName)
-            {
-                user.UserName = form.UserName;
-                _logger.LogCritical("User {0}, ({1}) has updated the username from user with id {2} to {3}", currentUser.UserName, currentUser.Id, user.Id, user.UserName);
-            }
+            user.Password = form.Password;
+            _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
 
-            if (form.ChangePassword)
-            {
-                user.Password = form.Password;
-                _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
-            }
-
-            TempData["snackbar"] = "User updated succesfully";
+            TempData["snackbar"] = "Changed password succesfully";
             return RedirectToAction("Index");
         }
         #endregion

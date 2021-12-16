@@ -7,10 +7,6 @@ namespace CSS_Server.ViewModels
         [Required(ErrorMessage = "Fill in a username.")]
         public string UserName { get; set; }
 
-        [Required]
-        [EmailAddress(ErrorMessage = "What a weird email you have. We're not going to do anything with this.")]
-        public string Email { get; set; }
-
         [Required(ErrorMessage = "A Password is required!")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
