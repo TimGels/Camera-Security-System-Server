@@ -12,7 +12,10 @@ namespace CSS_Server.Models.Authentication
         {
             get
             {
-                return _user.FindFirst(ClaimTypes.Name).Value;
+                Claim nameClaim = _user.FindFirst(ClaimTypes.Name);
+                if (nameClaim == null)
+                    return "Unauthorized user";
+                return nameClaim.Value;
             }
         }
 
@@ -20,7 +23,8 @@ namespace CSS_Server.Models.Authentication
         {
             get
             {
-                if (!int.TryParse(_user.FindFirst(ClaimTypes.NameIdentifier).Value, out int id))
+                Claim idClaim = _user.FindFirst(ClaimTypes.NameIdentifier);
+                if (idClaim == null || !int.TryParse(idClaim.Value, out int id))
                     id = -1;
                 return id;
             }
@@ -31,6 +35,14 @@ namespace CSS_Server.Models.Authentication
             get
             {
                 return _user.FindFirst(ClaimTypes.Email).Value;
+            }
+        }
+
+        public bool IsAuthenticated
+        {
+            get
+            {
+                return _user != null && _user.Identity != null && _user.Identity.IsAuthenticated;
             }
         }
 
