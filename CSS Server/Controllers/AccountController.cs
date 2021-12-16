@@ -126,7 +126,6 @@ namespace CSS_Server.Controllers
             ApplicationUser newUser = ApplicationUser.CreateUser(form.Email, form.UserName, form.Password);
             if (newUser != null)
             {
-                BaseUser currentUser = new BaseUser(User);
                 _logger.LogCritical("{0} ({1}) registered a new user {2} ({3}) with email {4}",
                     currentUser.UserName, currentUser.Id, newUser.UserName, newUser.Id, newUser.Email);
 
