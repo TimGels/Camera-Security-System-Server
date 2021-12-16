@@ -1,10 +1,9 @@
 ﻿using CSS_Server.Models;
 using CSS_Server.Models.Authentication;
-using CSS_Server.Models.Database.DBObjects;
-using CSS_Server.Models.Database.Repositories;
+using CSS_Server.Models.Database;
+using CSS_Server.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System;
 
 namespace CSS_Server.JsonProvider
@@ -13,11 +12,12 @@ namespace CSS_Server.JsonProvider
     {
         private readonly ILogger<CameraJsonProvider> _logger;
         private readonly CameraManager _cameraManager;
-        private readonly SQLiteRepository<DBCamera> _repository = new SQLiteRepository<DBCamera>();
+        private readonly CSSContext _context;
         public CameraJsonProvider(ILogger<CameraJsonProvider> logger, IServiceProvider provider)
         {
             _logger = logger;
             _cameraManager = provider.GetRequiredService<CameraManager>();
+            _context = CSSContext.GetContext();
         }
 
         /// <summary>
@@ -33,7 +33,11 @@ namespace CSS_Server.JsonProvider
             Camera camera = _cameraManager.GetCamera(id);
             if (camera != null)
             {
-                _repository.Delete(id);
+                _context.Cameras.Remove(new Camera()
+                {
+                    ID = id,
+                });
+                _context.SaveChanges();
 
                 //If there is an existing connection we will close it. 
                 if(camera.CameraConnection != null)
@@ -45,7 +49,7 @@ namespace CSS_Server.JsonProvider
                 _cameraManager.Cameras.Remove(camera);
 
                 //log the deletion
-                _logger.LogCritical("Camera with id:{0} deleted by user {1} ({2})", camera.Id, currentUser.UserName, currentUser.Id);
+                _logger.LogCritical("Camera with id:{0} deleted by user {1} ({2})", camera.ID, currentUser.UserName, currentUser.Id);
             }
             return true;
         }
@@ -62,16 +66,35 @@ namespace CSS_Server.JsonProvider
         internal bool RegisterCamera(string name, string description, string password, BaseUser currentUser)
         {
             //TODO add proper validation, for the password for example.
-            Camera camera = new Camera(name, description, password);
+            Camera camera = new Camera()
+            {
+                Name = name,
+                Description = description,
+            };
+
+            ChangePassword(camera, password);
+            _context.Cameras.Add(camera);
+            _context.SaveChanges();
 
             //Log the creation
-            _logger.LogCritical("New camera with id {0} created by {1} (UserId={2})", camera.Id, currentUser.UserName, currentUser.Id);
+            _logger.LogCritical("New camera with id {0} created by {1} (UserId={2})", camera.ID, currentUser.UserName, currentUser.Id);
 
             //add the new camera to the camera manager:
             _cameraManager.Cameras.Add(camera);
-            _logger.LogCritical("Camera with id:{0} added to the camera manager!", camera.Id);
+            _logger.LogCritical("Camera with id:{0} added to the camera manager!", camera.ID);
 
             return true;
+        }
+
+        /// <summary>
+        /// Method for changing the password of this camera.
+        /// The updated values will be saved to the database.
+        /// </summary>
+        /// <param name="newPassword"></param>
+        public void ChangePassword(Camera camera, string newPassword)
+        {
+            camera.Password = HashHelper.GenerateHash(newPassword, out string salt);
+            camera.Salt = salt;
         }
     }
 }

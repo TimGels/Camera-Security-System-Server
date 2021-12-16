@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-
 using Microsoft.Extensions.Logging;
-
-using CSS_Server.Models.Database.DBObjects;
-using CSS_Server.Models.Database.Repositories;
+using CSS_Server.Models.Database;
 
 namespace CSS_Server.Models.Logger
 {
@@ -13,7 +10,6 @@ namespace CSS_Server.Models.Logger
     {
         protected readonly DatabaseLoggerProvider _databaseLoggerProvider;
         private readonly Func<DatabaseLoggerConfiguration> _getConfig;
-        private static readonly SQLiteRepository<DBLog> _repository = new SQLiteRepository<DBLog>();
 
         public DatabaseLogger([NotNull]DatabaseLoggerProvider databaseLoggerProvider, Func<DatabaseLoggerConfiguration> getConfig)
         {
@@ -39,13 +35,15 @@ namespace CSS_Server.Models.Logger
             //add the log message to the database.
             Task.Run(() =>
             {
-                //Create a new DBLog entry and insert it using the repository.
-                _repository.Insert(new DBLog()
+                using CSSContext _context = CSSContext.GetContext();
+                //Create a new log entry and insert it.
+                _context.Logs.Add(new Log()
                 {
                     Level = (int)logLevel,
                     Message = formatter(state, exception),
                     TimeStamp = DateTime.Now,
                 });
+                _context.SaveChanges();
             });
 
         }
