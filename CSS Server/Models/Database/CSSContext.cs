@@ -1,11 +1,16 @@
-﻿using CSS_Server.Models.Authentication;
+﻿using CSS_Server.Controllers;
+using CSS_Server.Models.Authentication;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SQLitePCL;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace CSS_Server.Models.Database
@@ -59,6 +64,26 @@ namespace CSS_Server.Models.Database
                 Console.WriteLine(message);
             }
             Environment.Exit(1);
+        }
+
+        public static void InitializeDatabase(IHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<CSSContext>();
+                    context.Database.EnsureCreated();
+                    //Set the needStupAccount prop for the account controller.
+                    AccountController.needSetupAccount = !context.Users.Any();
+                }
+                catch (SqliteException ex) when (ex.SqliteErrorCode == 26) //SQLite Error 26: 'file is not a database'.
+                {
+                    //Happens when the given encryption key is incorrect.
+                    StopApplication("Given file is not a database. This is probably due a wrong encryption key.");
+                }
+            }
         }
     }
 }

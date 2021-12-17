@@ -15,23 +15,18 @@ namespace CSS_Server.Controllers
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
-        private static bool? _needSetupAccount;
+        public static bool needSetupAccount;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly CSSContext _context;
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, 
-            ILogger<AccountController> logger, IServiceProvider provider, CSSContext context)
+            ILogger<AccountController> logger, CSSContext context)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
-
-            if(_needSetupAccount == null)
-            {
-                _needSetupAccount = !_context.Users.Any();
-            }
         }
 
         #region Login and Logout
@@ -43,7 +38,7 @@ namespace CSS_Server.Controllers
             if (new BaseUser(User).IsAuthenticated)
                 return RedirectToAction("Index", "Camera");
 
-            if (_needSetupAccount == true)
+            if (needSetupAccount)
                 return RedirectToAction("Register");
 
             ViewData["Title"] = "CSS log-in";
@@ -116,7 +111,7 @@ namespace CSS_Server.Controllers
             BaseUser currentUser = new BaseUser(User);
 
             //For an unauthorized user registering a new user is only possible when the needSetupAccount Bool == true
-            if (!currentUser.IsAuthenticated && _needSetupAccount == false)
+            if (!currentUser.IsAuthenticated && !needSetupAccount)
                 return RedirectToAction("LogIn");
 
             ViewData["Title"] = "CSS: Register user";
@@ -140,14 +135,17 @@ namespace CSS_Server.Controllers
                 if (currentUser.IsAuthenticated)
                     return RedirectToAction("Index");
 
-                _needSetupAccount = false;
+                needSetupAccount = false;
                 return RedirectToAction("LogIn");
             }
             if(result.Errors.Count() > 0)
             {
                 foreach(var error in result.Errors)
                 {
-                    ModelState.AddModelError("Password", error.Description);
+                    if(error.Code == "DuplicateUserName")
+                        ModelState.AddModelError("UserName", error.Description);
+                    else
+                        ModelState.AddModelError("Password", error.Description);
                 }
             }
             TempData["snackbar"] = "Somethin went wrong while registering the user.";
@@ -192,11 +190,16 @@ namespace CSS_Server.Controllers
             //change the password
             var result = await _userManager.ResetPasswordAsync(user, token, form.Password);
 
-            BaseUser currentUser = new BaseUser(User);
+            if (result.Succeeded)
+            {
+                BaseUser currentUser = new BaseUser(User);
+                _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
+                TempData["snackbar"] = "Changed password succesfully";
+            } else
+            {
+                TempData["snackbar"] = "Password not changed successfully";
+            }
 
-            _logger.LogCritical("User {0}, ({1}) has updated the password from user with id {2}", currentUser.UserName, currentUser.Id, user.Id);
-
-            TempData["snackbar"] = "Changed password succesfully";
             return RedirectToAction("Index");
         }
         #endregion
