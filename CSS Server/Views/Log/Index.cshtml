@@ -1,0 +1,28 @@
+﻿@using CSS_Server.Models
+@using Microsoft.Extensions.Logging
+
+@{
+    Layout = "_Layout";
+}
+
+@model List<Log>
+
+<main class="main_dashboard">
+    <h1>Logs</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <td>ID</td><td>Level</td><td>Message</td><td>DateTime</td>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (Log log in Model)
+        {
+            <tr><td>@log.ID</td><td>@((LogLevel)log.Level) </td><td>@log.Message</td><td>@log.TimeStamp.ToString()</td></tr>
+        }
+    </tbody>
+    </table>
+    
+    <div id="snackbar"></div>
+</main>
