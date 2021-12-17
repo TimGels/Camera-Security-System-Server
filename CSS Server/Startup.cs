@@ -64,7 +64,7 @@ namespace CSS_Server
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;
 
-                // Email not required setting.
+                // Email confirmed not required setting.
                 options.SignIn.RequireConfirmedEmail = false;
             });
 

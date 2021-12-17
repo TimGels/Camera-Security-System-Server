@@ -3,11 +3,8 @@ using CSS_Server.Models.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
 
 namespace CSS_Server
 {
@@ -18,26 +15,9 @@ namespace CSS_Server
             IHost host = CreateHostBuilder(args).Build();
 
             //Initialize the database.
-            InitializeDatabase(host);
+            CSSContext.InitializeDatabase(host);
 
             host.Run();
-        }
-
-        private static void InitializeDatabase(IHost host)
-        {
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<CSSContext>();
-                    context.Database.EnsureCreated();
-                }
-                catch (Exception) //TODO catch error when key is incorrect
-                {
-                    Debug.WriteLine("An error occurred creating the DB.");
-                }
-            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

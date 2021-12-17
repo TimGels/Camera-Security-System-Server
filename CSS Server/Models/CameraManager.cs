@@ -11,7 +11,7 @@ namespace CSS_Server.Models
     public sealed class CameraManager
     {
         private readonly ILogger<CameraManager> _logger;
-        private List<Camera> _cameras;
+        private readonly List<Camera> _cameras;
 
         public CameraManager(ILogger<CameraManager> logger)
         {
