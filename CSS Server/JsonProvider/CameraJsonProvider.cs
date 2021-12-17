@@ -93,7 +93,7 @@ namespace CSS_Server.JsonProvider
         /// <param name="newPassword"></param>
         public void ChangePassword(Camera camera, string newPassword)
         {
-            camera.Password = HashHelper.GenerateHash(newPassword, out string salt);
+            camera.Password = HashHelper.GenerateHashPbkdf2(newPassword, out string salt);
             camera.Salt = salt;
         }
     }

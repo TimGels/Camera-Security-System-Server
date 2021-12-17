@@ -49,7 +49,7 @@ namespace CSS_Server.Models
         /// <returns></returns>
         public bool Validate(string password)
         {
-            return HashHelper.Verify(password, Password, Salt);
+            return HashHelper.VerifyPbkdf2(password, Password, Salt);
         }
     }
 }
