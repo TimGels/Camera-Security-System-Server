@@ -50,15 +50,21 @@ namespace CSS_Server.Models
             //Get the camera with its id
             Camera camera = GetCamera(message.CameraID);
 
-            //if the camera was found and it could be validated.
-            if (camera != null && camera.Validate(message.Password))
+            // Check if the camera was found and it could be validated.
+            if (camera == null || !camera.Validate(message.Password))
             {
-                _logger.LogCritical("Camera with id={0} succesfully authenticated!", camera.ID);
-                return camera;
+                _logger.LogInformation("Camera was not found or could not be authenticated!");
+                return null;
             }
 
-            _logger.LogInformation("Camera was not found or could not be authenticated!");
-            return null;
+            if (camera.IsConnected())
+            {
+                _logger.LogDebug("Camera tried to connect twice. Closing first connection!");
+                await camera.CameraConnection.Close();
+            }
+
+            _logger.LogCritical("Camera with id={0} succesfully authenticated!", camera.ID);
+            return camera;
         }
 
         public Camera GetCamera(int id)

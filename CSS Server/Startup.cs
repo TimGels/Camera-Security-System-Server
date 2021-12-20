@@ -115,7 +115,7 @@ namespace CSS_Server
 
             app.UseWebSockets(new WebSocketOptions()
             {
-                KeepAliveInterval = TimeSpan.FromSeconds(120)
+                KeepAliveInterval = TimeSpan.FromSeconds(30)
             });
 
             app.UseEndpoints(endpoints =>

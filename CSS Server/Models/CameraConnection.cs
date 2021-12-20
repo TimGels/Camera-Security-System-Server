@@ -24,12 +24,16 @@ namespace CSS_Server.Models
 
         public async Task<bool> Close()
         {
-            if (_webSocket != null)
+            if (_webSocket != null && _webSocket.State != WebSocketState.Aborted)
             {
                 try
                 {
                     await _webSocket.CloseAsync(WebSocketCloseStatus.Empty, null, CancellationToken.None);
                     return true;
+                }
+                catch (OperationCanceledException ex)
+                {
+                    _logger.LogDebug(ex.Message);
                 }
                 catch (WebSocketException ex)
                 {
@@ -49,7 +53,7 @@ namespace CSS_Server.Models
                     HandleReceivedMessage(message);
             }
 
-            _logger.LogInformation("Stopping reading websocket with state: " + _webSocket.State);
+            _logger.LogInformation("Stopping reading websocket with state: " + _webSocket?.State);
         }
 
         private void HandleReceivedMessage(Message message)
