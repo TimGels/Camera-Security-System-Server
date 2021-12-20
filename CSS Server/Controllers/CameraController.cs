@@ -53,7 +53,7 @@ namespace CSS_Server.Controllers
             }
 
             using AutoResetEvent waitHandle = new AutoResetEvent(false);    // Is signalled by incoming event
-            List<string> footage = null;                                    // Holds the data from the event
+            List<Footage> footage = null;                                   // Holds the data from the event
 
             // Declare handler for receiving event.
             EventHandler<FootageAllReceivedEventArgs> footageReceivedHandler = (sender, e) =>
