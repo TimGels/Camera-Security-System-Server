@@ -6,15 +6,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="~/css/fontawesome/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="~/css/general.css" asp-append-version="true" />
-
 
         <meta charset="utf-8" />
         <title>@ViewData["Title"]</title>
-
-    
-
     </head>
     <body>
 
@@ -28,19 +24,16 @@
           <div>Hola @User.Identity.Name</div>
         </nav>
     }
-        
-        
-            @RenderBody()
+    
+    @RenderBody()
 
-    <div id="snackbar"/>
     @if(TempData.TryGetValue("snackbar", out object snackbarText))
     {
-        <script>
-            var snackbar = document.getElementById("snackbar");
-            snackbar.innerText = "@snackbarText.ToString()";
-            snackbar.className = "show";
-            setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
-        </script>
+        <div id="snackbar">@snackbarText.ToString()</div>
+        <script src="~/js/ShowSnackbar.js"></script>
+    } else
+    {
+        <div id="snackbar"/>
     }
 
     </body>
