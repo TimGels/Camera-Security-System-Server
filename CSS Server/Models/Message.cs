@@ -20,9 +20,8 @@ namespace CSS_Server.Models
         [JsonProperty("password")]
         public string Password { get; set; }
 
-        // TODO: List<Footage> where Footage holds the filename and thumbnail.
         [JsonProperty("footage")]
-        public List<string> Footage { get; set; }
+        public List<Footage> Footage { get; set; }
 
         public Message(MessageType type)
         {

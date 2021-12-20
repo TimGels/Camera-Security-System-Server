@@ -1,4 +1,5 @@
-﻿@using CSS_Server.ViewModels
+@using CSS_Server.Models
+@using CSS_Server.ViewModels
 @using Newtonsoft.Json.Linq
 
 @{
@@ -15,11 +16,11 @@
     {
         <div class="cameras-container">
 
-            @foreach (string footage in Model.Footage)
+            @foreach (Footage footage in Model.Footage)
             {
                 <div class="single-camera-block">
                     <img src="media/camerafootage.jpg" alt="footage">
-                    <h2>@footage</h2>
+                    <h2>@footage.Filename</h2>
                 </div>
             }
         </div>
