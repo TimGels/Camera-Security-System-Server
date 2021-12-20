@@ -12,6 +12,12 @@ function trashbinOnClick(event, cameraBlock, cameraId) {
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url);
 
+        //Set the antiForgeryToken if it is available.
+        var antiForgery = document.getElementById("AntiForgeryToken");
+        if (antiForgery) {
+            xhr.setRequestHeader("RequestVerificationToken", antiForgery.innerText);
+        }
+
         //define a function for letting the user know that the camera is deleted succesfully (or not).
         xhr.onload = function () {
             var snackbar = document.getElementById("snackbar");

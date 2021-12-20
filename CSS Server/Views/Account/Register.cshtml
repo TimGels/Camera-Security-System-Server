@@ -35,6 +35,7 @@
             <h1>
             Register a new User
         </h1>
+        @Html.AntiForgeryToken()
         <div class="inputBox">
             <label for="UserName">UserName</label>
             <input asp-for="UserName" name="UserName" type="text" value="@Model.UserName">

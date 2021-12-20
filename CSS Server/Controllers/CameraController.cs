@@ -109,7 +109,10 @@ namespace CSS_Server.Controllers
                 ViewData["AlreadyPosted"] = true;
 
             if (!ModelState.IsValid || Request.Method == "GET")
+            {
+                ViewData["Title"] = "CSS: Register camera";
                 return View(form);
+            }
 
             //TODO add proper validation
             if(_cameraJsonProvider.RegisterCamera(form.Name, form.Description, form.Password, new BaseUser(User)))

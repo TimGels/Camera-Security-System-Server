@@ -35,7 +35,7 @@
         <h1>
             Register a new Camera
         </h1>
-
+        @Html.AntiForgeryToken()
         <div class="inputBox">
             <label for="Name">Name</label>
             <input asp-for="Name" name="Name" type="text" value="@Model.Name">

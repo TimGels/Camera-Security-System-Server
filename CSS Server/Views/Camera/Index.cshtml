@@ -1,4 +1,5 @@
 ﻿@using CSS_Server.Models
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery AntiForgery
 
 @{
     Layout = "_Layout";
@@ -9,6 +10,8 @@
 <main class="main_dashboard">
     <button class="addButton" title="Register a new camera">+</button>
     <h1>Camera's</h1>
+    <div id="AntiForgeryToken">@AntiForgery.GetAndStoreTokens(Context).RequestToken</div>
+
     <div class="cameras-container">
 
     @foreach (Camera camera in Model)
