@@ -36,6 +36,7 @@
             Update user
         </h1>
 
+        @Html.AntiForgeryToken()
         <div class="inputBox">
             <label for="UserName">UserName</label>
             <div name="Username">@ViewData["userName"]</div>

@@ -203,6 +203,10 @@ nav {
     }
 }
 
+#AntiForgeryToken {
+    display: none;
+}
+
 //Begin icons
 .icon {
     display: inline-block;
@@ -210,7 +214,6 @@ nav {
     font-weight: 900;
     font-size: 20px;
     cursor: pointer;
-
 }
 .trashbin {
     @extend .icon;
