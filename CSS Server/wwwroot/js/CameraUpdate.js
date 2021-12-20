@@ -22,5 +22,6 @@ function setPasswordDisplay() {
 changePassword.addEventListener('change', setPasswordDisplay);
 
 //set initial display style of the password boxes based on the changedpassword prop in the model:
-changePassword.checked = changePassword.value;
+changePassword.checked = JSON.parse(changePassword.value);
+
 setPasswordDisplay();
