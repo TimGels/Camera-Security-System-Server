@@ -102,6 +102,7 @@ namespace CSS_Server
             app.Use((context, next) =>
             {
                 context.Response.Headers["Cache-Control"] = "no-store,no-cache";
+                context.Response.Headers["Content-Security-Policy"] = "default-src 'none'; connect-src 'self'; style-src-elem 'self' https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; img-src 'self'; font-src 'self' https://fonts.gstatic.com; script-src 'self'";
                 return next.Invoke();
             });
 
