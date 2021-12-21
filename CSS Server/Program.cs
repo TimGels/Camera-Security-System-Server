@@ -37,7 +37,7 @@ namespace CSS_Server
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel(options =>
+                    webBuilder.ConfigureKestrel(options =>
                     {
                         options.AddServerHeader = false;
                     });
