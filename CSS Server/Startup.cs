@@ -3,13 +3,18 @@ using CSS_Server.Models;
 using CSS_Server.Models.Authentication;
 using CSS_Server.Models.Database;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CSS_Server
 {
@@ -45,8 +50,10 @@ namespace CSS_Server
             services.AddDbContext<CSSContext>(options => 
                 options.UseSqlite(CSSContext.connectionString));
 
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<CSSContext>();
+            services.AddDefaultIdentity<User>(options => 
+            {
+                    options.SignIn.RequireConfirmedAccount = false;
+            }).AddEntityFrameworkStores<CSSContext>();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -107,7 +114,12 @@ namespace CSS_Server
             {
                 context.Response.Headers["Cache-Control"] = "no-store,no-cache";
                 context.Response.Headers["Content-Security-Policy"] = "default-src 'none'; connect-src 'self'; style-src-elem 'self' https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; img-src 'self'; font-src 'self' https://fonts.gstatic.com; script-src 'self'";
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
                 return next.Invoke();
+            });
+
+            app.UseCookiePolicy(new CookiePolicyOptions {
+                Secure = CookieSecurePolicy.Always
             });
 
             //app.UseHttpsRedirection();
