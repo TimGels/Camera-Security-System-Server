@@ -40,7 +40,7 @@ body {
     align-items: center;
     flex-direction: column;
     height: 100%;
-    padding: 40px 20px 0 20px;
+
 
 
     .cameras-container {
@@ -48,6 +48,8 @@ body {
         grid-template-columns: 1fr 1fr 1fr;
         gap: 16px;
         height: min-content;
+        max-width: 100vw;
+
 
         .single-camera-block {
             display: flex;
@@ -64,8 +66,8 @@ body {
             border: 1px solid rgba(255, 255, 255, 0.18);
 
             &[online="True"]:hover {
-                background-color:red;
-                cursor:pointer;
+                background-color: rgb(17, 17, 16, 0.5);
+                cursor: pointer;
             }
 
             .camera-info {
@@ -74,94 +76,121 @@ body {
                 align-items: center;
                 padding: 0 16px 0 16px;
             }
+
+            img {
+                max-width: 100%;
+                padding: 16px 16px 0px 16px;
+            }
+
+            p {
+                color: white;
+                padding-left: 4px;
+            }
         }
     }
 }
 
-.dot {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    display: inline-block;
-}
+@media screen and (min-width: 1080px) {
+    .main_dashboard {
 
-.online {
-    @extend .dot;
-    background-color: lawngreen;
-}
-
-.offline {
-    @extend .dot;
-    background-color: red;
-}
-
-h2 {
-    color: white;
-    font-size: medium;
-}
-
-img {
-    max-width: 100%;
-    padding: 16px 16px 0px 16px;
-}
-
-h1{
-    color: #3b3a41;
-    font-size: large;
-}
-
-input[type=text], input[type=password], input[type=submit] {
-    width: 100%;
-
-    outline: none;
-    border: 1px solid white;
-    border-radius: 4px;
-    font-size: 18px;
-    height: 56px;
-}
-
-.inputBox {
-    max-width: 250px;
-    margin-bottom: 24px;
-    width: 100%;
-}
-
-.validationError{
-    color: red;
+        .cameras-container {
+            grid-template-columns: 1fr 1fr 1fr;
+            max-width: 75vw;
+        }
+    }
 }
 
 
-.addButton {
-    font-size: 18px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
+    .dot {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        display: inline-block;
+    }
 
-button {
-    font-size: 18px;
-}
+    .online {
+        @extend .dot;
+        background-color: lawngreen;
+    }
 
-input[type=submit], .addButton, button {
-    background-color: #4229d4;
-    border: 1px solid #4229d4;
-    color: white;
-    cursor: pointer;
-}
+    .offline {
+        @extend .dot;
+        background-color: red;
+    }
 
-label {
-    text-align: left;
-    display: block;
-    width: 100%;
-    padding-bottom: 8px;
-    color: white;
-}
+    h2 {
+        color: white;
+        font-size: medium;
+    }
 
-nav {
-    width: 100%;
-    background-color: #555;
-    overflow: auto;
+
+
+    h1 {
+        color: white;
+        font-size: large;
+        text-align: center;
+    }
+
+    input[type=text], input[type=password], input[type=submit] {
+        width: 100%;
+        outline: none;
+        border: 1px solid white;
+        border-radius: 4px;
+        font-size: 18px;
+        height: 56px;
+    }
+
+    .inputBox {
+        margin-bottom: 24px;
+        width: 100%;
+    }
+
+    .validationError {
+        color: red;
+    }
+
+
+    .addButton {
+        font-size: 18px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        position: fixed;
+        bottom: 10vh;
+        right: 10vw;
+    }
+
+    button {
+        font-size: 18px;
+    }
+
+    input[type=submit], .addButton, button {
+        background-color: #4229d4;
+        border: 1px solid #4229d4;
+        color: white;
+        cursor: pointer;
+
+        
+    }
+
+button.addButton:hover, input[type=submit]:hover {
+    background-color: darkblue;
 }
+    
+
+    label {
+        text-align: left;
+        display: block;
+        width: 100%;
+        padding-bottom: 8px;
+        color: white;
+    }
+
+    nav {
+        width: 100%;
+        background-color: #555;
+        overflow: auto;
+    }
 
     nav a, nav div {
         float: left;
@@ -171,137 +200,147 @@ nav {
         font-size: 17px;
     }
 
-        nav a:hover {
-            background-color: #000;
+    nav a:hover {
+        background-color: #000;
+    }
+
+    .active {
+        background-color: #04AA6D;
+    }
+
+
+
+    @media screen and (max-width: 600px) {
+        .main_form {
+            width: 100%;
+            margin-top: 0;
         }
 
-.active {
-    background-color: #04AA6D;
-}
+        .main_dashboard {
+            /*width: 100vw;*/
+            margin-top: 20px;
+            margin-bottom: 20px;
 
-@media screen and (max-width: 600px) {
-    .main_form {
-        width: 100%;
-        margin-top: 0;
-    }
-    .main_dashboard {
-        width: 100vw;
-        margin-top: 20px;
-        margin-bottom: 20px;
+            .cameras-container {
+                grid-template-columns: 1fr;
+                padding: 16px;
+                margin-top: 40px;
+                margin-bottom: 40px;
+
+                .single-camera-block {
+                    img {
+                        max-width: 75vw;
+                        padding: 0px;
+                    }
+                }
+            }
+        }
+
+
+
+
+        form {
+            width: 75vw;
+        }
     }
 
-    .cameras-container {
-        grid-template-columns: 1fr;
+    #AntiForgeryToken {
+        display: none;
+    }
+    //Begin icons
+    .icon {
+        display: inline-block;
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .trashbin {
+        @extend .icon;
+    }
+
+    .trashbin:before {
+        content: "\f1f8";
+    }
+
+    .pencil {
+        @extend .icon;
+    }
+
+    .pencil:before {
+        content: "\f304";
+    }
+    //End icons
+    //Begin snackbar
+    #snackbar {
+        visibility: hidden;
+        background-color: #333;
+        border-radius: 2px;
+        color: #fff;
+        text-align: center;
+        z-index: 1;
+        bottom: 30px;
+        font-size: 17px;
+        max-width: 300px;
         padding: 16px;
-        margin-top: 40px;
-        margin-bottom: 40px;
+        position: fixed;
+        margin: 5% auto; /* Will not center vertically and won't work in IE6/7. */
+        left: 0;
+        right: 0;
     }
 
-
-    form {
-        width: 75vw;
-    }
-}
-
-#AntiForgeryToken {
-    display: none;
-}
-
-//Begin icons
-.icon {
-    display: inline-block;
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 20px;
-    cursor: pointer;
-}
-.trashbin {
-    @extend .icon;
-}
-.trashbin:before {
-    content: "\f1f8";
-}
-
-.pencil {
-    @extend .icon;
-}
-
-.pencil:before {
-    content: "\f304";
-}
-//End icons
-
-//Begin snackbar
-#snackbar {
-
-    visibility: hidden;
-    background-color: #333;
-    border-radius: 2px;
-
-    color: #fff;
-    text-align: center;
-    z-index: 1;
-    bottom: 30px;
-    font-size: 17px;
-    max-width: 300px;
-    padding: 16px;
-    position: fixed;
-    margin: 5% auto; /* Will not center vertically and won't work in IE6/7. */
-    left: 0;
-    right: 0;
-}
-
-#snackbar.show {
-    visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
+    #snackbar.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
     }
 
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
+    @-webkit-keyframes fadein {
+        from {
+            bottom: 0;
+            opacity: 0;
+        }
 
-@keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
-
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
+        to {
+            bottom: 30px;
+            opacity: 1;
+        }
     }
 
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
-}
+    @keyframes fadein {
+        from {
+            bottom: 0;
+            opacity: 0;
+        }
 
-@keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
+        to {
+            bottom: 30px;
+            opacity: 1;
+        }
     }
 
-    to {
-        bottom: 0;
-        opacity: 0;
+    @-webkit-keyframes fadeout {
+        from {
+            bottom: 30px;
+            opacity: 1;
+        }
+
+        to {
+            bottom: 0;
+            opacity: 0;
+        }
     }
-}
-//End snackbar
+
+    @keyframes fadeout {
+        from {
+            bottom: 30px;
+            opacity: 1;
+        }
+
+        to {
+            bottom: 0;
+            opacity: 0;
+        }
+    }
+    //End snackbar
