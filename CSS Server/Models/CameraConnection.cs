@@ -73,8 +73,7 @@ namespace CSS_Server.Models
                     break;
 
                 case MessageType.DOWNLOAD_RESPONSE:
-                    // footage came in
-                    // do not know what to do with it..
+                    _logger.LogDebug(String.Format("Not handling incoming message of type ${0}", message.Type));
                     break;
 
                 default:
