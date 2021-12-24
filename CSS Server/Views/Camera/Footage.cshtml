@@ -21,6 +21,9 @@
                 <div class="single-camera-block">
                     <img src="/media/camerafootage.jpg" alt="footage">
                     <h2>@footage.Filename</h2>
+                    <h3>Length: @TimeSpan.FromMilliseconds( @footage.Duration.GetValueOrDefault() ).ToString(@"hh\:mm\:ss\:fff") </h3>
+                    <h3>Resolution: @footage.Resolution</h3>
+                    <h3>Bitrate: @Math.Round( (double) footage.Bitrate.GetValueOrDefault() / (1000 * 1000), 2) Mbps</h3>
                 </div>
             }
         </div>
