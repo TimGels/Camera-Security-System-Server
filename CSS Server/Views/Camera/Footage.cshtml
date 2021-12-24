@@ -10,7 +10,7 @@
 
 <h1>Footage for Camera: @Model.CameraName (@Model.CameraId)</h1>
 
-<main class="main">
+<main class="main_dashboard">
 
     @if (Model.Footage != null && Model.Footage.Count() > 0)
     {
@@ -20,10 +20,10 @@
             {
                 <div class="single-camera-block">
                     <img src="/media/camerafootage.jpg" alt="footage">
-                    <h2>@footage.Filename</h2>
-                    <h3>Length: @TimeSpan.FromMilliseconds( @footage.Duration.GetValueOrDefault() ).ToString(@"hh\:mm\:ss\:fff") </h3>
-                    <h3>Resolution: @footage.Resolution</h3>
-                    <h3>Bitrate: @Math.Round( (double) footage.Bitrate.GetValueOrDefault() / (1000 * 1000), 2) Mbps</h3>
+                    <p>@footage.Filename</p>
+                    <p>Length: @TimeSpan.FromMilliseconds( @footage.Duration.GetValueOrDefault() ).ToString(@"hh\:mm\:ss\:fff") </p>
+                    <p>Resolution: @footage.Resolution</p>
+                    <p>Bitrate: @Math.Round( (double) footage.Bitrate.GetValueOrDefault() / (1000 * 1000), 2) Mbps</p>
                 </div>
             }
         </div>
