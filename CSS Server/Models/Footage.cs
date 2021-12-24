@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 
 namespace CSS_Server.Models
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Footage
     {
         [JsonProperty("filename")]

@@ -8,6 +8,7 @@ namespace CSS_Server.Models
     /// Represents a complete message, used to communicate between the camera
     /// client and the server.
     /// </summary>
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Message
     {
         [JsonProperty("type")]
