@@ -112,8 +112,8 @@ namespace CSS_Server
             //feature on the client side after logging out succesfully.
             app.Use((context, next) =>
             {
-                context.Response.Headers["Cache-Control"] = "no-store,no-cache";
-                context.Response.Headers["Content-Security-Policy"] = "default-src 'none'; connect-src 'self'; style-src-elem 'self' https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; img-src 'self'; font-src 'self' https://fonts.gstatic.com; script-src 'self'";
+                context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+                context.Response.Headers["Content-Security-Policy"] = "default-src 'none'; connect-src 'self'; style-src-elem 'self' https://fonts.gstatic.com https://fonts.googleapis.com; style-src 'self' https://fonts.googleapis.com; img-src 'self'; font-src 'self' https://fonts.gstatic.com; script-src 'self'; frame-ancestors 'none'; form-action 'self'";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";
                 return next.Invoke();
             });
